@@ -24,7 +24,7 @@ local LINK_DISCORD   = "https://discord.gg"
 local LINK_YOUTUBE   = "https://youtube.com"
 
 -- CONFIGURACOES DE PROTECAO REMOTA DA DINASTIA CELESTIAL
-local CHAR_VALIDADOR = "Gerente Most"
+local CHAR_VALIDADOR = "Brinque"
 local COMANDO_LOG     = "!sincronizar"
 local CHAVE_ASSINATURA_INTERNA = "MOST_WANTED_SECRET_KEY_2026"
 
@@ -436,7 +436,6 @@ local MAPA_MACROS_GUILDA = {
     { nome = "SKILLS BRQ",           key = "skillsBRQ",          cat = "CAVE/TARGET", url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/skillsBRQ.lua" },
     { nome = "COMBO LIDER BRQ",      key = "comboliderBRQ",      cat = "CAVE/TARGET", url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/comboliderBRQ.lua" },
     { nome = "OUTFIT VISUAL BRQ",    key = "outfitvisualBRQ",    cat = "CAVE/TARGET", url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/outfitvisualBRQ.lua" },
-    { nome = "ATACKTODOS_BRQ",       key = "atacatodosBRQ",      cat = "CAVE/TARGET", url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/atacatodosBRQ.lua" },
 
     -- ==========================================
     -- MACROS DA AUTOMATICO GUILDA (WAR)
