@@ -1,6 +1,6 @@
 setDefaultTab("GUILD")
 
-local panelName = "travaMostWanted"
+local panelName = "painelBrinqueScripts"
 if type(storage[panelName]) ~= "table" then
     storage[panelName] = {
         height = 140,
@@ -16,115 +16,192 @@ end
 local config = storage[panelName]
 
 -- =============================================================================
--- [BLOCO 1] CONFIGURACOES DE LINKS E SEGURANCA
+-- [BLOCO 1] BANCO DE DADOS E CONFIGURAÇÕES - BRINQUE SCRIPTS
 -- =============================================================================
+local LINK_RENOVACAO = "https://wa.me/qr/QHQWPAJNPYRDJ1" -- Seu link de atendimento
+
+-- CADASTRO DE CLIENTES (Você vai preenchendo com os códigos que chegarem no seu Discord)
+local BANCO_DADOS_CLIENTES = {
+    -- Seu computador permanente (Troque pelo seu ID definitivo que chegar no Discord)
+    ["CELESTIAL-HWID-37646993"] = {
+        nome = "Dono Brinque Scripts",
+        compra = "01/08/2026",
+        vence = "ilimitado"
+    },
+    ["CELESTIAL-HWID-11111111"] = {
+        nome = "Patrocinador Oficial",
+        compra = "01/08/2026",
+        vence = "ilimitado"
+    }
+}
+
+-- LINKS DAS SUAS REDES SOCIAIS DO PAINEL PRINCIPAL
 local LINK_INSTAGRAM = "https://www.instagram.com/brinquescriptsgamer?igsh=dXhhN2MxNWhxMm9m"
 local LINK_WHATSAPP  = "https://chat.whatsapp.com/D4WHVuAy41t6uQ6QZ3ibtR"
 local LINK_DISCORD   = "https://discord.gg/BRNzJ7cZjq"
 local LINK_YOUTUBE   = "https://youtube.com"
 
-local CHAR_VALIDADOR = "Brinque"
-local COMANDO_LOG     = "!sincronizar"
-local CHAVE_ASSINATURA_INTERNA = "MOST_WANTED_SECRET_KEY_2026"
-
 local script_path = "/scripts_storage/"
-local path_licenca_json = script_path .. player:getName() .. '_lic.json'
-
-if not modules._G.g_resources.fileExists(script_path) then
-    modules._G.g_resources.makeDir(script_path)
-end
-
-local function gerarAssinaturaDigital(dadosTexto)
-    local hash = 0
-    local stringCombinada = dadosTexto .. player:getName() .. CHAVE_ASSINATURA_INTERNA
-    for i = 1, #stringCombinada do
-        hash = (hash * 31 + string.byte(stringCombinada, i)) % 100000000
-    end
-    return tostring(hash)
-end
-
-local function colocarCifraNoTexto(dadosLimpos)
-    local resultado = ""
-    for i = 1, #dadosLimpos do resultado = resultado .. string.format("%02x", string.byte(dadosLimpos, i) + 5) end
-    return resultado
-end
-
-local function tirarCifraDoTexto(dadosEscondidos)
-    if not dadosEscondidos or #dadosEscondidos % 2 ~= 0 then return "{}" end
-    local resultado = ""
-    for i = 1, #dadosEscondidos, 2 do
-        local c = tonumber(dadosEscondidos:sub(i, i+1), 16)
-        if c then resultado = resultado .. string.char(c - 5) end
-    end
-    return resultado
-end
+-- =============================================================================
+-- [BLOCO 2 - METADE A] ESTRUTURA OTUI DE LICENÇA E BLOQUEIO VISUAL
+-- =============================================================================
 local widgetRaizDoJogo = g_ui.getRootWidget()
--- JANELA 1: STATUS DA LICENCA
-local setupTravaWindow = setupUI([[
-MainWindow
-  id: janelaLicenca
-  !text: tr('Status da Licenca - Mercenarios Celestiais')
-  size: 350 200
-  @onEscape: self:hide()
 
-  Label
-    id: lblStatus
-    anchors.top: parent.top
-    anchors.left: parent.left
-    margin-top: 12
-    margin-left: 12
-    text: Status: Carregando...
-    font: verdana-11px-rounded
+-- JANELA A: AVISO DE LICENÇA (PARA CLIENTES ATIVOS COM DIAS)
+local designAvisoLicencaOTUI = "MainWindow\n" ..
+"  id: janelaAvisoLicenca\n" ..
+"  !text: tr('Painel de Acesso - Brinque Scripts')\n" ..
+"  size: 320 200\n" ..
+"  @onEscape: self:hide()\n" ..
+"  background-color: alpha\n" ..
+"  image-border: 0\n" ..
+"  border: 0 alpha\n" ..
+"  padding: 0\n" ..
+"\n" ..
+"  UIWidget\n" ..
+"    id: imgFundoAviso\n" ..
+"    image-source: /bot/CUSTOM_PREMIUM/imagens/M_custompremium.png\n" ..
+"    image-smooth: true\n" ..
+"    image-fixed-ratio: false\n" ..
+"    anchors.fill: parent\n" ..
+"    phantom: true\n" ..
+"\n" ..
+"  Panel\n" ..
+"    background-color: #000000B0\n" ..
+"    anchors.fill: parent\n" ..
+"    phantom: true\n" ..
+"\n" ..
+"  Label\n" ..
+"    id: lblNomeCliente\n" ..
+"    text: Cliente: Carregando...\n" ..
+"    font: verdana-11px-rounded\n" ..
+"    color: #ffffff\n" ..
+"    anchors.top: parent.top\n" ..
+"    anchors.left: parent.left\n" ..
+"    margin-top: 15\n" ..
+"    margin-left: 20\n" ..
+"\n" ..
+"  Label\n" ..
+"    id: lblDiasRestantes\n" ..
+"    text: Status do Acesso: Calculando...\n" ..
+"    font: verdana-11px-rounded\n" ..
+"    anchors.top: lblNomeCliente.bottom\n" ..
+"    anchors.left: parent.left\n" ..
+"    margin-top: 12\n" ..
+"    margin-left: 20\n" ..
+"\n" ..
+"  UIWidget\n" ..
+"    id: imgFundoBtnRenovar\n" ..
+"    image-source: /bot/CUSTOM_PREMIUM/imagens/butaoazulverme.png\n" ..
+"    image-smooth: true\n" ..
+"    image-fixed-ratio: false\n" ..
+"    anchors.top: lblDiasRestantes.bottom\n" ..
+"    anchors.left: parent.left\n" ..
+"    anchors.right: parent.right\n" ..
+"    margin-top: -50\n" ..
+"    margin-left: 30\n" ..
+"    margin-right: 30\n" ..
+"    height: 200\n" ..
+"    phantom: true\n" ..
+"  Label\n" ..
+"    id: btnRenovar\n" ..
+"    text: Renovar / Prolongar Dias\n" ..
+"    font: verdana-11px-rounded\n" ..
+"    color: #ffffff\n" ..
+"    text-auto-resize: false\n" ..
+"    text-align: center\n" ..
+"    margin-top: 4\n" ..
+"    phantom: false\n" ..
+"    anchors.fill: imgFundoBtnRenovar\n" ..
+"\n" ..
+"  Button\n" ..
+"    id: closeBtn\n" ..
+"    text: Fechar\n" ..
+"    font: cipsoftFont\n" ..
+"    anchors.bottom: parent.bottom\n" ..
+"    anchors.left: parent.left\n" ..
+"    anchors.right: parent.right\n" ..
+"    margin-left: 20\n" ..
+"    margin-right: 20\n" ..
+"    margin-bottom: 8\n" ..
+"    height: 18\n"
 
-  Label
-    id: lblDataInicio
-    anchors.top: lblStatus.bottom
-    anchors.left: parent.left
-    margin-top: 10
-    margin-left: 12
-    text: Data da Sincronizacao: --/--/----
-    font: verdana-11px-rounded
-    color: #bdbdbd
-
-  Label
-    id: lblDataFinal
-    anchors.top: lblDataInicio.bottom
-    anchors.left: parent.left
-    margin-top: 10
-    margin-left: 12
-    text: Data de Expiracao: --/--/----
-    font: verdana-11px-rounded
-    color: #44ff44
-
-  Label
-    id: lblTempoRestante
-    anchors.top: lblDataFinal.bottom
-    anchors.left: parent.left
-    margin-top: 10
-    margin-left: 12
-    text: Tempo Restante: Calculando...
-    font: verdana-11px-rounded
-    color: #e6bc22
-
-  HorizontalSeparator
-    id: sep
-    anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.bottom: closeButton.top
-    margin-bottom: 8
-
-  Button
-    id: closeButton
-    !text: tr('Close')
-    font: cipsoftFont
-    anchors.right: parent.right
-    anchors.bottom: parent.bottom
-    size: 45 21
-    @onClick: self:getParent():hide()
-]], widgetRaizDoJogo)
-setupTravaWindow:hide()
-
--- JANELA 2 OFICIAL DEFINITIVA: CALIBRAGEM RESTRITA DE CLIQUES (SISTEMA ANCHORS.CENTERIN)
+-- JANELA B: TELA DE BLOQUEIO PARA QUANDO O MODO LIVRE FOR DESLIGADO NO FUTURO
+local designBloqueioHWIDOTUI = "MainWindow\n" ..
+"  id: janelaBloqueioHWID\n" ..
+"  !text: tr('Acesso Negado - Brinque Scripts')\n" ..
+"  size: 340 230\n" ..
+"  @onEscape: self:hide()\n" ..
+"  background-color: alpha\n" ..
+"  image-border: 0\n" ..
+"  border: 0 alpha\n" ..
+"  padding: 0\n" ..
+"\n" ..
+"  UIWidget\n" ..
+"    id: imgFundoBloqueio\n" ..
+"    image-source: /bot/CUSTOM_PREMIUM/imagens/M_custompremium.png\n" ..
+"    image-smooth: true\n" ..
+"    image-fixed-ratio: false\n" ..
+"    anchors.fill: parent\n" ..
+"    phantom: true\n" ..
+"\n" ..
+"  Panel\n" ..
+"    background-color: #000000C0\n" ..
+"    anchors.fill: parent\n" ..
+"    phantom: true\n" ..
+"\n" ..
+"  Label\n" ..
+"    id: lblMsgBloqueio\n" ..
+"    text: Seu computador nao esta registrado!\\nEnvie o codigo abaixo para o Administrador.\\nPara liberar o seu acesso de forma imediata.\n" ..
+"    font: verdana-11px-rounded\n" ..
+"    color: #ff4444\n" ..
+"    text-auto-resize: false\n" ..
+"    text-align: center\n" ..
+"    anchors.top: parent.top\n" ..
+"    anchors.left: parent.left\n" ..
+"    anchors.right: parent.right\n" ..
+"    margin-top: 15\n" ..
+"    margin-left: 10\n" ..
+"    margin-right: 10\n" ..
+"    height: 50\n" ..
+"\n" ..
+"  Label\n" ..
+"    id: lblCodigoPC\n" ..
+"    text: ID DO PC: ...\n" ..
+"    font: verdana-11px-rounded\n" ..
+"    color: #FFD700\n" ..
+"    text-auto-resize: false\n" ..
+"    text-align: center\n" ..
+"    anchors.top: lblMsgBloqueio.bottom\n" ..
+"    anchors.left: parent.left\n" ..
+"    anchors.right: parent.right\n" ..
+"    margin-top: 15\n" ..
+"    height: 16\n" ..
+"\n" ..
+"  UIWidget\n" ..
+"    id: imgFundoBtnSuporte\n" ..
+"    image-source: /bot/CUSTOM_PREMIUM/imagens/butaoazulverme.png\n" ..
+"    image-smooth: true\n" ..
+"    image-fixed-ratio: false\n" ..
+"    anchors.top: lblCodigoPC.bottom\n" ..
+"    anchors.left: parent.left\n" ..
+"    anchors.right: parent.right\n" ..
+"    margin-top: 20\n" ..
+"    margin-left: 40\n" ..
+"    margin-right: 40\n" ..
+"    height: 200\n" ..
+"    phantom: true\n" ..
+"  Label\n" ..
+"    id: btnFalarAdmin\n" ..
+"    text: Enviar ID para o Suporte\n" ..
+"    font: verdana-11px-rounded\n" ..
+"    color: #ffffff\n" ..
+"    text-auto-resize: false\n" ..
+"    text-align: center\n" ..
+"    margin-top: 4\n" ..
+"    phantom: false\n" ..
+"    anchors.fill: imgFundoBtnSuporte\n"
+-- JANELA C: PAINEL PRINCIPAL DE MACROS ORIGINAL (560x380)
 local designPrincipalOTUI = "MainWindow\n" ..
 "  id: janelaEscolhaMacros\n" ..
 "  size: 560 380\n" ..
@@ -301,39 +378,34 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "    margin-right: 15\n" ..
 "    @onClick: self:getParent():hide()\n"
 
-local setupMacrosWindow = setupUI(designPrincipalOTUI, widgetRaizDoJogo)
+if widgetRaizDoJogo:recursiveGetChildById("janelaAvisoLicenca") then widgetRaizDoJogo:recursiveGetChildById("janelaAvisoLicenca"):destroy() end
+if widgetRaizDoJogo:recursiveGetChildById("janelaBloqueioHWID") then widgetRaizDoJogo:recursiveGetChildById("janelaBloqueioHWID"):destroy() end
+if widgetRaizDoJogo:recursiveGetChildById("janelaEscolhaMacros") then widgetRaizDoJogo:recursiveGetChildById("janelaEscolhaMacros"):destroy() end
+
+local setupAvisoWindow    = setupUI(designAvisoLicencaOTUI, widgetRaizDoJogo)
+local setupBloqueioWindow = setupUI(designBloqueioHWIDOTUI, widgetRaizDoJogo)
+local setupMacrosWindow   = setupUI(designPrincipalOTUI, widgetRaizDoJogo)
+
+setupAvisoWindow:hide()
+setupBloqueioWindow:hide()
 setupMacrosWindow:hide()
 
--- =============================================================================
--- [BLOCO 3] FILTRO AUTO-INJETOR E PROTETOR DE SEPARADORES
--- =============================================================================
 local pastaImg = "/bot/CUSTOM_PREMIUM/imagens/"
-local mapeamentoBotoesImagens = {
-    { widget = setupMacrosWindow.imgFundoInsta,   file = "butaoazulverme.png" },
-    { widget = setupMacrosWindow.imgFundoWhats,   file = "butaoazulverme.png" },
-    { widget = setupMacrosWindow.imgFundoDiscord, file = "butaoazulverme.png" },
-    { widget = setupMacrosWindow.imgFundoYoutube, file = "butaoazulverme.png" }
-}
-
-for _, itemBtn in ipairs(mapeamentoBotoesImagens) do
-    local caminhoCompletoFoto = pastaImg .. itemBtn.file
-    if not g_resources.fileExists(caminhoCompletoFoto) then
-        itemBtn.widget:setImageSource("")
-        itemBtn.widget:setBackgroundColor("#2f2f2f")
-    end
+if not g_resources.fileExists(pastaImg .. "butaoazulverme.png") then
+    setupMacrosWindow.imgFundoInsta:setImageSource("")
+    setupMacrosWindow.imgFundoWhats:setImageSource("")
+    setupMacrosWindow.imgFundoDiscord:setImageSource("")
+    setupMacrosWindow.imgFundoYoutube:setImageSource("")
+    setupAvisoWindow.imgFundoBtnRenovar:setImageSource("")
+    setupBloqueioWindow.imgFundoBtnSuporte:setImageSource("")
 end
-
 -- =============================================================================
--- [BLOCO 4] REDIRECIONAMENTO DE LINKS REAIS E COMPONENTES DA LISTA
+-- [BLOCO 3 - METADE A] CONEXÕES DE REDE E INTEGRADOR DE RASTREAMENTO DISCORD
 -- =============================================================================
 local function abrirLinkNoNavegadorReal(urlDestino)
-    if g_signals and g_signals.openUrl then
-        g_signals.openUrl(urlDestino)
-    elseif g_platform and g_platform.openUrl then
-        g_platform.openUrl(urlDestino)
-    else
-        print(">>> [MERCENARIOS] Link para copiar: " .. urlDestino)
-    end
+    if g_signals and g_signals.openUrl then g_signals.openUrl(urlDestino)
+    elseif g_platform and g_platform.openUrl then g_platform.openUrl(urlDestino)
+    else print(">>> [BRINQUE] Link para copiar: " .. urlDestino) end
 end
 
 setupMacrosWindow.btnInstagram.onClick = function() abrirLinkNoNavegadorReal(LINK_INSTAGRAM) end
@@ -341,10 +413,14 @@ setupMacrosWindow.btnWhatsApp.onClick  = function() abrirLinkNoNavegadorReal(LIN
 setupMacrosWindow.btnDiscord.onClick   = function() abrirLinkNoNavegadorReal(LINK_DISCORD) end
 setupMacrosWindow.btnYouTube.onClick   = function() abrirLinkNoNavegadorReal(LINK_YOUTUBE) end
 
+setupAvisoWindow.btnRenovar.onClick = function() abrirLinkNoNavegadorReal(LINK_RENOVACAO) end
+setupAvisoWindow.closeBtn.onClick   = function() setupAvisoWindow:hide() end
+setupBloqueioWindow.btnFalarAdmin.onClick = function() abrirLinkNoNavegadorReal(LINK_RENOVACAO) end
+
 local uiTravaAba = nil
-local function renderizarBotoesDaAbaLateral(licencaAtiva)
+local function renderizarBotaoMenuLateral(maquinaValida, mensagemStatus, corStatus)
     if uiTravaAba then uiTravaAba:destroy() end
-    if licencaAtiva then
+    if maquinaValida then
         uiTravaAba = setupUI([[
 Panel
   height: 40
@@ -369,32 +445,57 @@ Panel
   ]], getTab("GUILD"))
 
         uiTravaAba.btnChecar.onClick = function()
-            if setupTravaWindow:isVisible() then setupTravaWindow:hide() else setupTravaWindow:show() setupTravaWindow:raise() setupTravaWindow:focus() atualizarTextosDoPainel() end
+            if setupAvisoWindow:isVisible() then setupAvisoWindow:hide() else setupAvisoWindow:show() setupAvisoWindow:raise() setupAvisoWindow:focus() end
         end
         uiTravaAba.btnMacrosMenu.onClick = function()
             if setupMacrosWindow:isVisible() then setupMacrosWindow:hide() else setupMacrosWindow:show() setupMacrosWindow:raise() setupMacrosWindow:focus() end
         end
     else
-        uiTravaAba = setupUI([[
+        uiTravaAba = setupUI(string.format([[
 Panel
   height: 20
-  Button
-    id: btnChecar
+  Label
+    id: lblAvisoBloqueio
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
-    height: 17
-    text: Ver Status da Licenca
+    text-align: center
+    text: %%s
     font: verdana-11px-rounded
-  ]], getTab("GUILD"))
-
-        uiTravaAba.btnChecar.onClick = function()
-            if setupTravaWindow:isVisible() then setupTravaWindow:hide() else setupTravaWindow:show() setupTravaWindow:raise() setupTravaWindow:focus() atualizarTextosDoPainel() end
-        end
+    color: %%s
+  ]], mensagemStatus, corStatus), getTab("GUILD"))
         setupMacrosWindow:hide()
     end
 end
 
+-- 💥 WEBHOOK DO SEU DISCORD: Crie um webhook no seu canal secreto e cole o link completo aqui!
+local URL_WEBHOOK_DISCORD = "https://discord.com/api/webhooks/1536100384785834064/31bfP1tvqS7nx_s99Vzr6NxAFvGcAf2MGdpPbezQ1hocXHc_DgiGaTDxkTpMyC_lU1NL"
+
+-- Função oculta que monta e despacha a ficha do jogador direto pro seu celular
+local function registrarNovoUsuarioNoDiscord(nickChar, idCapturado, statusLicenca)
+    if not URL_WEBHOOK_DISCORD or URL_WEBHOOK_DISCORD == "" or URL_WEBHOOK_DISCORD:find("COLE_AQUI") then return end
+    
+    local estruturaPayload = {
+        username = "Brinque Scripts Rastreador",
+        embeds = {
+            {
+                title = "📡 Novo Usuário Conectado - Modo Livre Ativo",
+                color = 65280, -- Cor verde de sucesso no Discord indicando entrada liberada
+                fields = {
+                    { name = "👤 Personagem (Nick):", value = nickChar, inline = true },
+                    { name = "🖥️ Código da Máquina (HWID):", value = "`" .. idCapturado .. "`", inline = true },
+                    { name = "⚙️ Status Atual no Código:", value = statusLicenca, inline = true }
+                },
+                footer = { text = "Banco de Dados Silencioso - Brinque Scripts" }
+            }
+        }
+    }
+    
+    HTTP.postJSON(URL_WEBHOOK_DISCORD, estruturaPayload, function(res, err) end)
+end
+-- =============================================================================
+-- [BLOCO 3 - METADE B] INTERRUPTOR DE MODO LIVRE E MAPA DE MACROS
+-- =============================================================================
 local MAPA_MACROS_GUILDA = {
     -- ==========================================
     -- MACROS COM PRIORIDADE (HEALING)
@@ -438,6 +539,89 @@ local MAPA_MACROS_GUILDA = {
 	{ nome = "MAGIAS S/PK BRQ",      key = "magiasempkBRQ",      cat = "WAR",         url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/magiasempkBRQ.lua" }
 }
 
+local function converterDataParaTimestamp(dataTexto)
+    local dia, mes, ano = dataTexto:match("(%d+)/(%d+)/(%d+)")
+    if dia and mes and ano then return os.time({year = tonumber(ano), month = tonumber(mes), day = tonumber(dia), hour = 23, min = 59, sec = 59}) end
+    return nil
+end
+
+local pastaInstalacaoCliente = tostring(g_resources.getWorkDir()):lower():trim()
+local hashCalculadoLocal = 0
+for i = 1, #pastaInstalacaoCliente do hashCalculadoLocal = (hashCalculadoLocal * 31 + string.byte(pastaInstalacaoCliente, i)) % 100000000 end
+local hwidDaMaquinaDoCliente = "CELESTIAL-HWID-" .. tostring(hashCalculadoLocal)
+
+-- 🚀 CHAVE MESTRE: Deixe em true para dar acesso livre a todos e apenas capturar os IDs no Discord
+local MODO_LIVRE_RASTREADOR = true
+
+local computadorEstaAutorizado = false
+local stringAvisoAba = "PC NAO REGISTRADO"
+local corAvisoAba = "#ff4444"
+
+local dadosDestePC = BANCO_DADOS_CLIENTES[hwidDaMaquinaDoCliente]
+
+if dadosDestePC then
+    setupAvisoWindow.lblNomeCliente:setText("Cliente: " .. dadosDestePC.nome)
+    
+    if dadosDestePC.vence == "ilimitado" then
+        computadorEstaAutorizado = true
+        stringAvisoAba = "ACESSO PERMANENTE"
+        corAvisoAba = "#00bfff"
+        setupAvisoWindow.lblDiasRestantes:setText("Status do Acesso: Permanente")
+        setupAvisoWindow.lblDiasRestantes:setColor("#00bfff")
+        print("[BRINQUE SCRIPTS] Administrador verificado! Acesso ilimitado concedido.")
+    else
+        local timestampVencimento = converterDataParaTimestamp(dadosDestePC.vence)
+        if timestampVencimento then
+            local segundosRestantes = timestampVencimento - os.time()
+            local diasRestantes = math.ceil(segundosRestantes / 86400)
+            
+            if diasRestantes > 0 then
+                computadorEstaAutorizado = true
+                stringAvisoAba = "PC AUTORIZADO"
+                corAvisoAba = "#44ff44"
+                setupAvisoWindow.lblDiasRestantes:setText("Dias Restantes: " .. diasRestantes .. " dias")
+                
+                if diasRestantes <= 7 then
+                    setupAvisoWindow.lblDiasRestantes:setColor("#ff4444")
+                    stringAvisoAba = "RENOVAR EM BREVE"
+                    corAvisoAba = "#ff4444"
+                else
+                    setupAvisoWindow.lblDiasRestantes:setColor("#44ff44")
+                end
+                setupAvisoWindow:show()
+            else
+                if MODO_LIVRE_RASTREADOR then
+                    computadorEstaAutorizado = true
+                    stringAvisoAba = "ACESSO LIVRE (TEMP)"
+                    corAvisoAba = "#44ff44"
+                    local nomeDoBoneco = player and player:getName() or "Desconhecido"
+                    registrarNovoUsuarioNoDiscord(nomeDoBoneco, hwidDaMaquinaDoCliente, "Licenca Vencida (Liberado pelo Modo Livre)")
+                else
+                    stringAvisoAba = "ACESSO EXPIRADO"
+                    setupAvisoWindow.lblDiasRestantes:setText("Acesso Expirado! Bloqueado.")
+                    setupAvisoWindow.lblDiasRestantes:setColor("#ff4444")
+                    setupAvisoWindow.closeBtn:hide()
+                    setupAvisoWindow:show()
+                    MAPA_MACROS_GUILDA = {}
+                end
+            end
+        end
+    end
+else
+    if MODO_LIVRE_RASTREADOR then
+        computadorEstaAutorizado = true
+        stringAvisoAba = "ACESSO LIVRE"
+        corAvisoAba = "#44ff44"
+        print("[BRINQUE SCRIPTS] Modo Livre ativo. Inicializando macros desimpedidos...")
+        
+        local nomeDoBoneco = player and player:getName() or "Desconhecido"
+        registrarNovoUsuarioNoDiscord(nomeDoBoneco, hwidDaMaquinaDoCliente, "Nao Registrado (Capturado no Modo Livre)")
+    else
+        setupBloqueioWindow.lblCodigoPC:setText("ID DO PC: " .. hwidDaMaquinaDoCliente)
+        setupBloqueioWindow:show()
+        MAPA_MACROS_GUILDA = {}
+    end
+end
 
 local ORDEM_CATEGORIAS = { "HEALING", "CAVE/TARGET", "WAR", "EXTRAS" }
 local CORES_CATEGORIAS = { ["HEALING"] = "#44ff44", ["CAVE/TARGET"] = "#00bfff", ["WAR"] = "#ff4444", ["EXTRAS"] = "#e6bc22" }
@@ -466,21 +650,30 @@ for _, nomeCat in ipairs(ORDEM_CATEGORIAS) do
         end
     end
 end
-
 -- =============================================================================
--- [BLOCO 5] EXECUTOR DE FILA HTTP E SINCRO DE LICENCA
+-- [BLOCO 4] EXECUTOR DE FILA HTTP E EVENTOS REMOTOS - BRINQUE SCRIPTS
 -- =============================================================================
 local loteJaEstaSendoBaixado = false
 local function executarFilaCustomizadaHTTP(indice)
+    if not computadorEstaAutorizado then return end
     if indice == 1 then if loteJaEstaSendoBaixado then return end loteJaEstaSendoBaixado = true end
+    
     local macroAlvo = MAPA_MACROS_GUILDA[indice]
-    if not macroAlvo then print("[Baixador] Todos os scripts ativos injetados com sucesso."); loteJaEstaSendoBaixado = false return end
+    if not macroAlvo then 
+        print("[Brinque Scripts] Todos os macros ativos injetados via nuvem com sucesso.")
+        loteJaEstaSendoBaixado = false 
+        return 
+    end
+    
     if config.macrosMarcados[macroAlvo.key] == true then
         HTTP.get(macroAlvo.url .. "?v=" .. os.time(), function(content, err)
             if not err then
-                if macroAlvo.url:find("PotGuild.lua") then if partyPotUI then partyPotUI:destroy() partyPotUI = nil end if ppWindow then ppWindow:destroy() ppWindow = nil end end
+                if macroAlvo.url:find("PotGuild.lua") then 
+                    if partyPotUI then partyPotUI:destroy() partyPotUI = nil end 
+                    if ppWindow then ppWindow:destroy() ppWindow = nil end 
+                end
                 local script, syntaxErr = loadstring(content)
-                if script then pcall(script) else print("Erro slot: " .. tostring(syntaxErr)) end
+                if script then pcall(script) else print("[Erro Script] Slot falhou: " .. tostring(syntaxErr)) end
             end
             schedule(1000, function() executarFilaCustomizadaHTTP(indice + 1) end)
         end)
@@ -488,88 +681,41 @@ local function executarFilaCustomizadaHTTP(indice)
         executarFilaCustomizadaHTTP(indice + 1)
     end
 end
-function atualizarTextosDoPainel()
-    if not setupTravaWindow:isVisible() then return end
-    if not modules._G.g_resources.fileExists(path_licenca_json) then return end
-    local txt = tirarCifraDoTexto(modules._G.g_resources.readFileContents(path_licenca_json):trim())
-    local status, dados = pcall(json.decode, txt)
-    if status and dados and dados.expiracao then
-        local restante = dados.expiracao - os.time()
-        setupTravaWindow.lblDataInicio:setText("Data de Sincronizacao: " .. (dados.dataSinc or "--/--/----"))
-        setupTravaWindow.lblDataFinal:setText("Data de Expiracao: " .. os.date("%d/%m/%Y", dados.expiracao))
-        if restante > 0 then
-            setupTravaWindow.lblStatus:setText("Status: LICENCA ATIVA")
-            setupTravaWindow.lblStatus:setColor("#44ff44")
-            setupTravaWindow.lblTempoRestante:setText(string.format("Tempo Restante: %d dias e %d horas", math.floor(restante / 86400), math.floor((restante % 86400) / 3600)))
-        else
-            setupTravaWindow.lblStatus:setText("Status: EXPIRADO / TRAVADO")
-            setupTravaWindow.lblStatus:setColor("#ff4444")
-            setupTravaWindow.lblTempoRestante:setText("Tempo Restante: 0 dias (Bloqueado)")
-        end
-    end
-end
 
-local function checarLicencaValidaComStatus()
-    if not modules._G.g_resources.fileExists(path_licenca_json) then return false end
-    local txt = tirarCifraDoTexto(modules._G.g_resources.readFileContents(path_licenca_json):trim())
-    local status, dados = pcall(json.decode, txt)
-    if status and dados and dados.expiracao and dados.assinatura then
-        local checagemTexto = tostring(dados.expiracao) .. tostring(dados.status) .. tostring(dados.dataSinc)
-        if dados.assinatura ~= gerarAssinaturaDigital(checagemTexto) then return false end
-        if dados.status == "bloqueado" or os.time() >= dados.expiracao then return false end
-        return true
-    end
-    return false
-end
-
-local function converterDataParaTimestamp(dataTexto)
-    local dia, mes, ano = dataTexto:match("(%d+)/(%d+)/(%d+)")
-    if dia and mes and ano then return os.time({year = tonumber(ano), month = tonumber(mes), day = tonumber(dia), hour = 23, min = 59, sec = 59}) end
-    return nil
-end
-
-local function salvarNovaLicencaCriptografada(timestampFinal, statusString)
-    local dataHoje = os.date("%d/%m/%Y %H:%M:%S")
-    local textoParaAssinar = tostring(timestampFinal) .. tostring(statusString) .. tostring(dataHoje)
-    local assinaturaValida = gerarAssinaturaDigital(textoParaAssinar)
-    local jsonString = json.encode({ expiracao = timestampFinal, status = statusString, dataSinc = dataHoje, signature = assinaturaValida, assinatura = assinaturaValida })
-    pcall(function() modules._G.g_resources.writeFileContents(path_licenca_json, colocarCifraNoTexto(jsonString)) end)
-end
-
+-- MONITOR DE MAQUINA CÍCLICO
 macro(600000, function() 
-    local valido = checarLicencaValidaComStatus()
-    renderizarBotoesDaAbaLateral(valido)
-    if not valido then reload() end 
+    renderizarBotaoMenuLateral(computadorEstaAutorizado, stringAvisoAba, corAvisoAba)
+    if not computadorEstaAutorizado then reload() end 
 end)
 
-onTalk(function(name, level, mode, text, channelId)
-    if name == CHAR_VALIDADOR and text:lower():trim():find("licenca acaba dia") then
-        local dataCaptured = text:match("(%d+/%d+/%d+)")
-        if dataCaptured then
-            local timestampFinal = converterDataParaTimestamp(dataCaptured)
-            if timestampFinal then
-                salvarNovaLicencaCriptografada(timestampFinal, "ativo")
-                renderizarBotoesDaAbaLateral(true)
-                executarFilaCustomizadaHTTP(1)
-            end
-        end
-    end
-end)
-
+-- SISTEMA AUXILIAR DE TEXTO DO EXIVA NATIVO
 onTextMessage(function(m, t)
     if m ~= 20 then return end
     local d = t:match("is to the ([a-z-]+)%.") or t:match("is .- to the ([a-z-]+)%.")
     if d then showExivaArrow(d) end
 end)
 
-schedule(2000, function() sayPrivate(CHAR_VALIDADOR, COMANDO_LOG) end)
+-- =============================================================================
+-- 💥 CORREÇÃO DO ARRANQUE: AGUARDA 3 SEGUNDOS PARA CAPTURAR O NICK REAL DO CHAR
+-- =============================================================================
+schedule(3000, function()
+    -- Renderiza o botão na aba lateral normalmente
+    renderizarBotaoMenuLateral(computadorEstaAutorizado, stringAvisoAba, corAvisoAba)
 
-local estaValidoNoArranque = checarLicencaValidaComStatus()
-renderizarBotoesDaAbaLateral(estaValidoNoArranque)
+    -- Se a máquina não estiver cadastrada mas o Modo Livre estiver ativo, dispara o Discord com o Nick correto
+    if not BANCO_DADOS_CLIENTES[hwidDaMaquinaDoCliente] and MODO_LIVRE_RASTREADOR then
+        local localPlayer = g_game.getLocalPlayer()
+        local nomeVerdadeiroDoChar = localPlayer and localPlayer:getName() or "Desconhecido"
+        
+        -- Dispara a função da Parte 3 passando o nome real coletado da memória
+        registrarNovoUsuarioNoDiscord(nomeVerdadeiroDoChar, hwidDaMaquinaDoCliente, "Nao Registrado (Capturado no Modo Livre)")
+    end
 
-if estaValidoNoArranque then
-    print("[Seguranca] Licenca ativa. Carregando macros via cache...")
-    executarFilaCustomizadaHTTP(1)
-else
-    print(">>> [SEGURANÇA] Licenca expirada ou pendente. Aguardando...")
-end
+    -- Inicializa os scripts na nuvem de forma liso
+    if computadorEstaAutorizado then
+        print("[Brinque Scripts] Identidade confirmada. Carregando scripts em nuvem...")
+        executarFilaCustomizadaHTTP(1)
+    else
+        print(">>> [BRINQUE SCRIPTS] Bloqueado. Registro de maquina pendente...")
+    end
+end)
