@@ -545,12 +545,15 @@ local function converterDataParaTimestamp(dataTexto)
     return nil
 end
 
-local pastaInstalacaoCliente = tostring(g_resources.getWorkDir()):lower():trim()
+-- CORREÇÃO SUPREMA: Captura o nome da conta do Windows do cara (Nunca se repete)
+local usuarioNativoWindows = tostring(g_sys.getUsername()):lower():trim()
 local hashCalculadoLocal = 0
-for i = 1, #pastaInstalacaoCliente do hashCalculadoLocal = (hashCalculadoLocal * 31 + string.byte(pastaInstalacaoCliente, i)) % 100000000 end
-local hwidDaMaquinaDoCliente = "CELESTIAL-HWID-" .. tostring(hashCalculadoLocal)
+for i = 1, #usuarioNativoWindows do 
+    hashCalculadoLocal = (hashCalculadoLocal * 31 + string.byte(usuarioNativoWindows, i)) % 100000000 
+end
+hwidDaMaquinaDoCliente = "BRINQUE-PC-" .. tostring(hashCalculadoLocal)
 
--- 🚀 CHAVE MESTRE: Deixe em true para dar acesso livre a todos e apenas capturar os IDs no Discord
+-- CHAVE MESTRE: Mantida em true para capturar os novos códigos separados no seu Discord
 local MODO_LIVRE_RASTREADOR = true
 
 local computadorEstaAutorizado = false
@@ -650,6 +653,7 @@ for _, nomeCat in ipairs(ORDEM_CATEGORIAS) do
         end
     end
 end
+
 -- =============================================================================
 -- [BLOCO 4] EXECUTOR DE FILA HTTP E EVENTOS REMOTOS - BRINQUE SCRIPTS
 -- =============================================================================
