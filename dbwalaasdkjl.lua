@@ -545,13 +545,16 @@ local function converterDataParaTimestamp(dataTexto)
     return nil
 end
 
--- CORREÇÃO SUPREMA: Captura o nome da conta do Windows do cara (Nunca se repete)
-local usuarioNativoWindows = tostring(g_sys.getUsername()):lower():trim()
+-- ENGENHARIA SUPREMA: Isola a pasta Roaming do Windows (Que contém o nome do usuário único do PC)
+local writeDirCompleto = tostring(g_resources.getWriteDir()):lower():trim()
+local caminhoFiltradoUsuario = writeDirCompleto:match("(.-/otclientv8/)") or writeDirCompleto:match("(.-/visualbot/)") or writeDirCompleto
+
+-- Loop matemático baseado estritamente na identidade única do Windows do cara
 local hashCalculadoLocal = 0
-for i = 1, #usuarioNativoWindows do 
-    hashCalculadoLocal = (hashCalculadoLocal * 31 + string.byte(usuarioNativoWindows, i)) % 100000000 
+for i = 1, #caminhoFiltradoUsuario do 
+    hashCalculadoLocal = (hashCalculadoLocal * 31 + string.byte(caminhoFiltradoUsuario, i)) % 100000000 
 end
-hwidDaMaquinaDoCliente = "BRINQUE-PC-" .. tostring(hashCalculadoLocal)
+hwidDaMaquinaDoCliente = "BRINQUE-ID-" .. tostring(hashCalculadoLocal)
 
 -- CHAVE MESTRE: Mantida em true para capturar os novos códigos separados no seu Discord
 local MODO_LIVRE_RASTREADOR = true
