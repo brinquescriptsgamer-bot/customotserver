@@ -533,6 +533,7 @@ local MAPA_MACROS_GUILDA = {
 	{ nome = "FILTRO BATTLE BRQ",    key = "filtrobatleBRQ",     cat = "HEALING",     url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/filtrobatleBRQ" },
 	{ nome = "SKILLS BRQ",           key = "skillsBRQ",          cat = "CAVE/TARGET", url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/skillsBRQ.lua" },
     { nome = "FPS BRQ",              key = "fpsBRQ",             cat = "WAR",         url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/fpsBRQ.lua" },
+	{ nome = "BUGMAP BRQ",              key = "bugmapBRQ",             cat = "EXTRAS",         url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Extras/bugmap.lua" },
     { nome = "RAINBOW COLOR BRQ",    key = "rainbowcolorBRQ",    cat = "EXTRAS",       url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/rainbowcolorBRQ.lua" },
     { nome = "HUND COLOR BRQ",       key = "hundcolorBRQ",       cat = "EXTRAS",       url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/hundcolorBRQ.lua" },
     { nome = "OPEN BAG CHEIA BRQ",   key = "openbagcheiaBRQ",    cat = "EXTRAS",       url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/openbagcheiaBRQ.lua" },
