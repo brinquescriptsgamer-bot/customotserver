@@ -16,26 +16,64 @@ end
 local config = storage[panelName]
 
 -- =============================================================================
--- [BLOCO 1] BANCO DE DADOS E CONFIGURAÇÕES - BRINQUE SCRIPTS
+-- [PARTE 1 DE 6] BANCO DE DADOS FECHADO E DIRETÓRIO - BRINQUE SCRIPTS
 -- =============================================================================
 local LINK_RENOVACAO = "https://wa.me/qr/QHQWPAJNPYRDJ1" -- Seu link de atendimento
+local pastaImg = "/bot/CUSTOM_PREMIUM/imagens/"
 
--- CADASTRO DE CLIENTES (Você vai preenchendo com os códigos que chegarem no seu Discord)
+-- BANCO DE DADOS DE CLIENTES RIGIDO (Apenas IDs autorizados entram no bot)
 local BANCO_DADOS_CLIENTES = {
-    -- Seu computador permanente (Troque pelo seu ID definitivo que chegar no Discord)
-    ["CELESTIAL-HWID-37646993"] = {
+    -- Substitua pelo seu ID definitivo "BRINQUE-GLOBAL-XXXXXXXX" que chegar no seu Discord
+    ["BRINQUE-GLOBAL-8405406"] = {
         nome = "Dono Brinque Scripts",
         compra = "01/08/2026",
         vence = "ilimitado"
     },
-    ["CELESTIAL-HWID-11111111"] = {
+    ["BRINQUE-GLOBAL-11111111"] = {
         nome = "Patrocinador Oficial",
         compra = "01/08/2026",
         vence = "ilimitado"
+    },
+	
+	["BRINQUE-GLOBAL-45525429"] = {
+        nome = "Marcos",
+        compra = "11/08/2026",
+        vence = "12/09/2026"
+    },
+	
+    ["BRINQUE-GLOBAL-73518479"] = {
+        nome = "Luiz Henrique",
+        compra = "11/08/2026",
+        vence = "12/09/2026"
+    },
+	    ["BRINQUE-GLOBAL-8481060"] = {
+        nome = "Kyan Rodrigo",
+        compra = "11/08/2026",
+        vence = "12/09/2026"
+    },
+		    ["BRINQUE-GLOBAL-53228478"] = {
+        nome = "Adriiano",
+        compra = "11/08/2026",
+        vence = "12/09/2026"
+    },
+		    ["BRINQUE-GLOBAL-38396807"] = {
+        nome = "Matheus",
+        compra = "11/08/2026",
+        vence = "12/09/2026"
+    },
+	
+    ["BRINQUE-GLOBAL-17988101"] = {
+        nome = "Helio",
+        compra = "11/08/2026",
+        vence = "12/09/2026"
+    },
+    ["BRINQUE-GLOBAL-10949865"] = {
+        nome = "Wesley",
+        compra = "11/08/2026",
+        vence = "12/09/2026"
     }
 }
 
--- LINKS DAS SUAS REDES SOCIAIS DO PAINEL PRINCIPAL
 local LINK_INSTAGRAM = "https://www.instagram.com/brinquescriptsgamer?igsh=dXhhN2MxNWhxMm9m"
 local LINK_WHATSAPP  = "https://chat.whatsapp.com/D4WHVuAy41t6uQ6QZ3ibtR"
 local LINK_DISCORD   = "https://discord.gg/BRNzJ7cZjq"
@@ -43,7 +81,7 @@ local LINK_YOUTUBE   = "https://youtube.com"
 
 local script_path = "/scripts_storage/"
 -- =============================================================================
--- [BLOCO 2 - METADE A] ESTRUTURA OTUI DE LICENÇA E BLOQUEIO VISUAL
+-- [PARTE 2 DE 6] STRINGS OTUI ENGENHARIZADAS (JANELAS A E B COM ANCHOR LAYOUT)
 -- =============================================================================
 local widgetRaizDoJogo = g_ui.getRootWidget()
 
@@ -57,6 +95,7 @@ local designAvisoLicencaOTUI = "MainWindow\n" ..
 "  image-border: 0\n" ..
 "  border: 0 alpha\n" ..
 "  padding: 0\n" ..
+"  layout: anchor\n" .. -- Injeção mestre para destravar as âncoras no tema Retro
 "\n" ..
 "  UIWidget\n" ..
 "    id: imgFundoAviso\n" ..
@@ -67,7 +106,7 @@ local designAvisoLicencaOTUI = "MainWindow\n" ..
 "    phantom: true\n" ..
 "\n" ..
 "  Panel\n" ..
-"    background-color: #000000B0\n" ..
+"    background-color: #00000030\n" ..
 "    anchors.fill: parent\n" ..
 "    phantom: true\n" ..
 "\n" ..
@@ -98,7 +137,7 @@ local designAvisoLicencaOTUI = "MainWindow\n" ..
 "    anchors.top: lblDiasRestantes.bottom\n" ..
 "    anchors.left: parent.left\n" ..
 "    anchors.right: parent.right\n" ..
-"    margin-top: -50\n" ..
+"    margin-top: -40\n" ..
 "    margin-left: 30\n" ..
 "    margin-right: 30\n" ..
 "    height: 200\n" ..
@@ -110,7 +149,7 @@ local designAvisoLicencaOTUI = "MainWindow\n" ..
 "    color: #ffffff\n" ..
 "    text-auto-resize: false\n" ..
 "    text-align: center\n" ..
-"    margin-top: 4\n" ..
+"    margin-top: -24\n" ..
 "    phantom: false\n" ..
 "    anchors.fill: imgFundoBtnRenovar\n" ..
 "\n" ..
@@ -136,6 +175,7 @@ local designBloqueioHWIDOTUI = "MainWindow\n" ..
 "  image-border: 0\n" ..
 "  border: 0 alpha\n" ..
 "  padding: 0\n" ..
+"  layout: anchor\n" .. -- Destrava o alinhamento das imagens e caixas de texto
 "\n" ..
 "  UIWidget\n" ..
 "    id: imgFundoBloqueio\n" ..
@@ -146,7 +186,7 @@ local designBloqueioHWIDOTUI = "MainWindow\n" ..
 "    phantom: true\n" ..
 "\n" ..
 "  Panel\n" ..
-"    background-color: #000000C0\n" ..
+"    background-color: #00000040\n" ..
 "    anchors.fill: parent\n" ..
 "    phantom: true\n" ..
 "\n" ..
@@ -186,7 +226,7 @@ local designBloqueioHWIDOTUI = "MainWindow\n" ..
 "    anchors.top: lblCodigoPC.bottom\n" ..
 "    anchors.left: parent.left\n" ..
 "    anchors.right: parent.right\n" ..
-"    margin-top: 20\n" ..
+"    margin-top: -20\n" ..
 "    margin-left: 40\n" ..
 "    margin-right: 40\n" ..
 "    height: 200\n" ..
@@ -198,10 +238,12 @@ local designBloqueioHWIDOTUI = "MainWindow\n" ..
 "    color: #ffffff\n" ..
 "    text-auto-resize: false\n" ..
 "    text-align: center\n" ..
-"    margin-top: 4\n" ..
+"    margin-top: -23\n" ..
 "    phantom: false\n" ..
 "    anchors.fill: imgFundoBtnSuporte\n"
--- JANELA C: PAINEL PRINCIPAL DE MACROS ORIGINAL (560x380)
+-- =============================================================================
+-- [PARTE 3 DE 6] STRING OTUI - PAINEL PRINCIPAL DE MACROS (ANCHOR LAYOUT)
+-- =============================================================================
 local designPrincipalOTUI = "MainWindow\n" ..
 "  id: janelaEscolhaMacros\n" ..
 "  size: 560 380\n" ..
@@ -210,6 +252,7 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "  image-border: 0\n" ..
 "  border: 0 alpha\n" ..
 "  padding: 0\n" ..
+"  layout: anchor\n" .. -- Destrava o alinhamento das redes sociais e painéis de rolagem
 "\n" ..
 "  UIWidget\n" ..
 "    id: imgFundoCustomCelestiais\n" ..
@@ -221,7 +264,7 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "    phantom: true\n" ..
 "\n" ..
 "  Panel\n" ..
-"    background-color: #00000055\n" ..
+"    background-color: #00000025\n" ..
 "    anchors.fill: parent\n" ..
 "    margin: -5\n" ..
 "    phantom: true\n" ..
@@ -272,7 +315,7 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "    anchors.top: lblRedesTitulo.bottom\n" ..
 "    anchors.left: parent.horizontalCenter\n" ..
 "    anchors.right: parent.right\n" ..
-"    margin-top: -65\n" ..
+"    margin-top: -50\n" ..
 "    margin-left: 20\n" ..
 "    margin-right: 15\n" ..
 "    height: 200\n" ..
@@ -284,7 +327,7 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "    color: #ffffff\n" ..
 "    text-auto-resize: false\n" ..
 "    text-align: center\n" ..
-"    margin-top: -5\n" ..
+"    margin-top: -13\n" ..
 "    phantom: false\n" ..
 "    anchors.centerIn: imgFundoInsta\n" ..
 "\n" ..
@@ -296,8 +339,8 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "    anchors.top: imgFundoInsta.bottom\n" ..
 "    anchors.left: parent.horizontalCenter\n" ..
 "    anchors.right: parent.right\n" ..
-"    margin-top: -165\n" ..
-"    margin-left: 30\n" ..
+"    margin-top: -160\n" ..
+"    margin-left: 20\n" ..
 "    margin-right: 15\n" ..
 "    height: 200\n" ..
 "    phantom: true\n" ..
@@ -308,7 +351,7 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "    color: #ffffff\n" ..
 "    text-auto-resize: false\n" ..
 "    text-align: center\n" ..
-"    margin-top: -5\n" ..
+"    margin-top: -13\n" ..
 "    phantom: false\n" ..
 "    anchors.centerIn: imgFundoWhats\n" ..
 "\n" ..
@@ -320,10 +363,10 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "    anchors.top: imgFundoWhats.bottom\n" ..
 "    anchors.left: parent.horizontalCenter\n" ..
 "    anchors.right: parent.right\n" ..
-"    margin-top: -165\n" ..
+"    margin-top: -160\n" ..
 "    margin-left: 20\n" ..
 "    margin-right: 15\n" ..
-"    height: 200\n" ..
+"    height: 200\n" .. 
 "    phantom: true\n" ..
 "  Label\n" ..
 "    id: btnDiscord\n" ..
@@ -332,7 +375,7 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "    color: #ffffff\n" ..
 "    text-auto-resize: false\n" ..
 "    text-align: center\n" ..
-"    margin-top: -5\n" ..
+"    margin-top: -13\n" ..
 "    phantom: false\n" ..
 "    anchors.centerIn: imgFundoDiscord\n" ..
 "\n" ..
@@ -344,7 +387,7 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "    anchors.top: imgFundoDiscord.bottom\n" ..
 "    anchors.left: parent.horizontalCenter\n" ..
 "    anchors.right: parent.right\n" ..
-"    margin-top: -165\n" ..
+"    margin-top: -160\n" ..
 "    margin-left: 20\n" ..
 "    margin-right: 15\n" ..
 "    height: 200\n" ..
@@ -356,7 +399,7 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "    color: #ffffff\n" ..
 "    text-auto-resize: false\n" ..
 "    text-align: center\n" ..
-"    margin-top: -5\n" ..
+"    margin-top: -13\n" ..
 "    phantom: false\n" ..
 "    anchors.centerIn: imgFundoYoutube\n" ..
 "\n" ..
@@ -377,11 +420,22 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "    margin-bottom: 5\n" ..
 "    margin-right: 15\n" ..
 "    @onClick: self:getParent():hide()\n"
+-- =============================================================================
+-- [PARTE 4 DE 6] INICIALIZAÇÃO DE PANÉIS, LINKS E WEBHOOK DISCORD PROTEGIDO
+-- =============================================================================
+-- 1. FUNÇÃO ANCORADA NO TOPO: Registra a leitura do navegador na memória primeiro
+local function abrirLinkNoNavegadorReal(urlDestino)
+    if g_signals and g_signals.openUrl then g_signals.openUrl(urlDestino)
+    elseif g_platform and g_platform.openUrl then g_platform.openUrl(urlDestino)
+    else print(">>> [BRINQUE] Link para copiar: " .. urlDestino) end
+end
 
+-- 2. DESTRUIÇÃO DE COMPONENTES ANTIGOS DUPLICADOS
 if widgetRaizDoJogo:recursiveGetChildById("janelaAvisoLicenca") then widgetRaizDoJogo:recursiveGetChildById("janelaAvisoLicenca"):destroy() end
 if widgetRaizDoJogo:recursiveGetChildById("janelaBloqueioHWID") then widgetRaizDoJogo:recursiveGetChildById("janelaBloqueioHWID"):destroy() end
 if widgetRaizDoJogo:recursiveGetChildById("janelaEscolhaMacros") then widgetRaizDoJogo:recursiveGetChildById("janelaEscolhaMacros"):destroy() end
 
+-- 3. CRIAÇÃO FÍSICA SEGURA DOS COMPONENTES OTUI
 local setupAvisoWindow    = setupUI(designAvisoLicencaOTUI, widgetRaizDoJogo)
 local setupBloqueioWindow = setupUI(designBloqueioHWIDOTUI, widgetRaizDoJogo)
 local setupMacrosWindow   = setupUI(designPrincipalOTUI, widgetRaizDoJogo)
@@ -390,32 +444,25 @@ setupAvisoWindow:hide()
 setupBloqueioWindow:hide()
 setupMacrosWindow:hide()
 
-local pastaImg = "/bot/CUSTOM_PREMIUM/imagens/"
+-- 4. TRAVA DE IMAGENS FANTASMAS
 if not g_resources.fileExists(pastaImg .. "butaoazulverme.png") then
-    setupMacrosWindow.imgFundoInsta:setImageSource("")
-    setupMacrosWindow.imgFundoWhats:setImageSource("")
-    setupMacrosWindow.imgFundoDiscord:setImageSource("")
-    setupMacrosWindow.imgFundoYoutube:setImageSource("")
-    setupAvisoWindow.imgFundoBtnRenovar:setImageSource("")
-    setupBloqueioWindow.imgFundoBtnSuporte:setImageSource("")
-end
--- =============================================================================
--- [BLOCO 3 - METADE A] CONEXÕES DE REDE E INTEGRADOR DE RASTREAMENTO DISCORD
--- =============================================================================
-local function abrirLinkNoNavegadorReal(urlDestino)
-    if g_signals and g_signals.openUrl then g_signals.openUrl(urlDestino)
-    elseif g_platform and g_platform.openUrl then g_platform.openUrl(urlDestino)
-    else print(">>> [BRINQUE] Link para copiar: " .. urlDestino) end
+    if setupMacrosWindow.imgFundoInsta then setupMacrosWindow.imgFundoInsta:setImageSource("") end
+    if setupMacrosWindow.imgFundoWhats then setupMacrosWindow.imgFundoWhats:setImageSource("") end
+    if setupMacrosWindow.imgFundoDiscord then setupMacrosWindow.imgFundoDiscord:setImageSource("") end
+    if setupMacrosWindow.imgFundoYoutube then setupMacrosWindow.imgFundoYoutube:setImageSource("") end
+    if setupAvisoWindow.imgFundoBtnRenovar then setupAvisoWindow.imgFundoBtnRenovar:setImageSource("") end
+    if setupBloqueioWindow.imgFundoBtnSuporte then setupBloqueioWindow.imgFundoBtnSuporte:setImageSource("") end
 end
 
-setupMacrosWindow.btnInstagram.onClick = function() abrirLinkNoNavegadorReal(LINK_INSTAGRAM) end
-setupMacrosWindow.btnWhatsApp.onClick  = function() abrirLinkNoNavegadorReal(LINK_WHATSAPP) end
-setupMacrosWindow.btnDiscord.onClick   = function() abrirLinkNoNavegadorReal(LINK_DISCORD) end
-setupMacrosWindow.btnYouTube.onClick   = function() abrirLinkNoNavegadorReal(LINK_YOUTUBE) end
+-- 5. ATRIBUIÇÃO DOS EVENTOS DE CLIQUE (AGORA ENXERGANDO A FUNÇÃO PERFEITAMENTE)
+if setupMacrosWindow.btnInstagram then setupMacrosWindow.btnInstagram.onClick = function() abrirLinkNoNavegadorReal(LINK_INSTAGRAM) end end
+if setupMacrosWindow.btnWhatsApp then setupMacrosWindow.btnWhatsApp.onClick  = function() abrirLinkNoNavegadorReal(LINK_WHATSAPP) end end
+if setupMacrosWindow.btnDiscord then setupMacrosWindow.btnDiscord.onClick   = function() abrirLinkNoNavegadorReal(LINK_DISCORD) end end
+if setupMacrosWindow.btnYouTube then setupMacrosWindow.btnYouTube.onClick   = function() abrirLinkNoNavegadorReal(LINK_YOUTUBE) end end
 
-setupAvisoWindow.btnRenovar.onClick = function() abrirLinkNoNavegadorReal(LINK_RENOVACAO) end
-setupAvisoWindow.closeBtn.onClick   = function() setupAvisoWindow:hide() end
-setupBloqueioWindow.btnFalarAdmin.onClick = function() abrirLinkNoNavegadorReal(LINK_RENOVACAO) end
+if setupAvisoWindow.btnRenovar then setupAvisoWindow.btnRenovar.onClick = function() abrirLinkNoNavegadorReal(LINK_RENOVACAO) end end
+if setupAvisoWindow.closeBtn then setupAvisoWindow.closeBtn.onClick   = function() setupAvisoWindow:hide() end end
+if setupBloqueioWindow.btnFalarAdmin then setupBloqueioWindow.btnFalarAdmin.onClick = function() abrirLinkNoNavegadorReal(LINK_RENOVACAO) end end
 
 local uiTravaAba = nil
 local function renderizarBotaoMenuLateral(maquinaValida, mensagemStatus, corStatus)
@@ -451,7 +498,7 @@ Panel
             if setupMacrosWindow:isVisible() then setupMacrosWindow:hide() else setupMacrosWindow:show() setupMacrosWindow:raise() setupMacrosWindow:focus() end
         end
     else
-        uiTravaAba = setupUI(string.format([[
+        uiTravaAba = setupUI([[
 Panel
   height: 20
   Label
@@ -460,41 +507,48 @@ Panel
     anchors.left: parent.left
     anchors.right: parent.right
     text-align: center
-    text: %%s
     font: verdana-11px-rounded
-    color: %%s
-  ]], mensagemStatus, corStatus), getTab("GUILD"))
+  ]], getTab("GUILD"))
+        
+        if uiTravaAba and uiTravaAba.lblAvisoBloqueio then
+            uiTravaAba.lblAvisoBloqueio:setText(tostring(mensagemStatus))
+            uiTravaAba.lblAvisoBloqueio:setColor(corStatus or "#ff4444")
+        end
         setupMacrosWindow:hide()
     end
 end
 
--- 💥 WEBHOOK DO SEU DISCORD: Crie um webhook no seu canal secreto e cole o link completo aqui!
+-- 💥 INSTALE SEU WEBHOOK COPIADO DO DISCORD AQUI DENTRO
 local URL_WEBHOOK_DISCORD = "https://discord.com/api/webhooks/1536100384785834064/31bfP1tvqS7nx_s99Vzr6NxAFvGcAf2MGdpPbezQ1hocXHc_DgiGaTDxkTpMyC_lU1NL"
 
--- Função oculta que monta e despacha a ficha do jogador direto pro seu celular
+local jaEnviouNotificacao = false
+
 local function registrarNovoUsuarioNoDiscord(nickChar, idCapturado, statusLicenca)
+    if jaEnviouNotificacao then return end
     if not URL_WEBHOOK_DISCORD or URL_WEBHOOK_DISCORD == "" or URL_WEBHOOK_DISCORD:find("COLE_AQUI") then return end
     
+    jaEnviouNotificacao = true
+    
     local estruturaPayload = {
-        username = "Brinque Scripts Rastreador",
+        username = "Brinque Scripts Alerta",
         embeds = {
             {
-                title = "📡 Novo Usuário Conectado - Modo Livre Ativo",
-                color = 65280, -- Cor verde de sucesso no Discord indicando entrada liberada
+                title = "🔒 Verificacao de Licenca de Hardware",
+                color = 16711680,
                 fields = {
                     { name = "👤 Personagem (Nick):", value = nickChar, inline = true },
-                    { name = "🖥️ Código da Máquina (HWID):", value = "`" .. idCapturado .. "`", inline = true },
-                    { name = "⚙️ Status Atual no Código:", value = statusLicenca, inline = true }
+                    { name = "🖥️ Codigo da Maquina (HWID):", value = "`" .. idCapturado .. "`", inline = true },
+                    { name = "⚙️ Status do Acesso:", value = statusLicenca, inline = true }
                 },
-                footer = { text = "Banco de Dados Silencioso - Brinque Scripts" }
+                footer = { text = "Controle de Vendas Automatizado - Brinque Scripts" }
             }
         }
     }
-    
     HTTP.postJSON(URL_WEBHOOK_DISCORD, estruturaPayload, function(res, err) end)
 end
+
 -- =============================================================================
--- [BLOCO 3 - METADE B] INTERRUPTOR DE MODO LIVRE E MAPA DE MACROS
+-- [PARTE 5 DE 6] ENGINE DE DATAS E ASSINATURA RIGIDA RAM - BRINQUE SCRIPTS
 -- =============================================================================
 local MAPA_MACROS_GUILDA = {
     -- ==========================================
@@ -534,7 +588,6 @@ local MAPA_MACROS_GUILDA = {
 	{ nome = "SKILLS BRQ",           key = "skillsBRQ",          cat = "CAVE/TARGET", url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/skillsBRQ.lua" },
     { nome = "FPS BRQ",              key = "fpsBRQ",             cat = "WAR",         url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/fpsBRQ.lua" },
 	{ nome = "BUGMAP BRQ",              key = "bugmapBRQ",             cat = "EXTRAS",         url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/bugmap.lua" },
-	{ nome = "FOLLOW ATTACK BRQ",              key = "followattackBRQ",             cat = "EXTRAS",         url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/followattackBRQ.lua" },
     { nome = "RAINBOW COLOR BRQ",    key = "rainbowcolorBRQ",    cat = "EXTRAS",       url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/rainbowcolorBRQ.lua" },
     { nome = "HUND COLOR BRQ",       key = "hundcolorBRQ",       cat = "EXTRAS",       url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/hundcolorBRQ.lua" },
     { nome = "OPEN BAG CHEIA BRQ",   key = "openbagcheiaBRQ",    cat = "EXTRAS",       url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/openbagcheiaBRQ.lua" },
@@ -547,90 +600,83 @@ local function converterDataParaTimestamp(dataTexto)
     return nil
 end
 
--- ENGENHARIA SUPREMA: Isola a pasta Roaming do Windows (Que contém o nome do usuário único do PC)
-local writeDirCompleto = tostring(g_resources.getWriteDir()):lower():trim()
-local caminhoFiltradoUsuario = writeDirCompleto:match("(.-/otclientv8/)") or writeDirCompleto:match("(.-/visualbot/)") or writeDirCompleto
+-- EXTRAÇÃO DE MEMÓRIA DO EXECUTÁVEL: ID travado por hardware que ignora OTServers
+local somaModulosFixo = 0
+if dink and type(dink) == "table" then somaModulosFixo = somaModulosFixo + #dink end
+if m_modules and type(m_modules) == "table" then somaModulosFixo = somaModulosFixo + #m_modules end
 
--- Loop matemático baseado estritamente na identidade única do Windows do cara
-local hashCalculadoLocal = 0
-for i = 1, #caminhoFiltradoUsuario do 
-    hashCalculadoLocal = (hashCalculadoLocal * 31 + string.byte(caminhoFiltradoUsuario, i)) % 100000000 
+local sementesMatematica = tostring(g_resources.getLayout()):lower():trim()
+local hashCalculadoLocal = somaModulosFixo * 7
+for i = 1, #sementesMatematica do 
+    hashCalculadoLocal = (hashCalculadoLocal * 31 + string.byte(sementesMatematica, i)) % 100000000 
 end
-hwidDaMaquinaDoCliente = "BRINQUE-ID-" .. tostring(hashCalculadoLocal)
+hwidDaMaquinaDoCliente = "BRINQUE-GLOBAL-" .. tostring(hashCalculadoLocal)
 
--- CHAVE MESTRE: Mantida em true para capturar os novos códigos separados no seu Discord
-local MODO_LIVRE_RASTREADOR = true
+-- 🔒 ACESSO FECHADO SEGURO: Modo livre totalmente desativado para proteção comercial
+local MODO_LIVRE_RASTREADOR = false
 
-local computadorEstaAutorizado = false
-local stringAvisoAba = "PC NAO REGISTRADO"
-local corAvisoAba = "#ff4444"
+computadorEstaAutorizado = false
+stringAvisoAba = "PC NAO REGISTRADO"
+corAvisoAba = "#ff4444"
 
-local dadosDestePC = BANCO_DADOS_CLIENTES[hwidDaMaquinaDoCliente]
-
-if dadosDestePC then
-    setupAvisoWindow.lblNomeCliente:setText("Cliente: " .. dadosDestePC.nome)
+-- Validador de chaves e prazos com proteção estrita de interface
+local function processarSegurancaEVerificacaoDeDatas()
+    local dadosDestePC = BANCO_DADOS_CLIENTES[hwidDaMaquinaDoCliente]
     
-    if dadosDestePC.vence == "ilimitado" then
-        computadorEstaAutorizado = true
-        stringAvisoAba = "ACESSO PERMANENTE"
-        corAvisoAba = "#00bfff"
-        setupAvisoWindow.lblDiasRestantes:setText("Status do Acesso: Permanente")
-        setupAvisoWindow.lblDiasRestantes:setColor("#00bfff")
-        print("[BRINQUE SCRIPTS] Administrador verificado! Acesso ilimitado concedido.")
-    else
-        local timestampVencimento = converterDataParaTimestamp(dadosDestePC.vence)
-        if timestampVencimento then
-            local segundosRestantes = timestampVencimento - os.time()
-            local diasRestantes = math.ceil(segundosRestantes / 86400)
-            
-            if diasRestantes > 0 then
-                computadorEstaAutorizado = true
-                stringAvisoAba = "PC AUTORIZADO"
-                corAvisoAba = "#44ff44"
-                setupAvisoWindow.lblDiasRestantes:setText("Dias Restantes: " .. diasRestantes .. " dias")
-                
-                if diasRestantes <= 7 then
-                    setupAvisoWindow.lblDiasRestantes:setColor("#ff4444")
-                    stringAvisoAba = "RENOVAR EM BREVE"
-                    corAvisoAba = "#ff4444"
-                else
-                    setupAvisoWindow.lblDiasRestantes:setColor("#44ff44")
-                end
-                setupAvisoWindow:show()
-            else
-                if MODO_LIVRE_RASTREADOR then
+    if dadosDestePC then
+        if setupAvisoWindow and setupAvisoWindow.lblNomeCliente then
+            setupAvisoWindow.lblNomeCliente:setText("Cliente: " .. dadosDestePC.nome)
+        end
+        
+        if dadosDestePC.vence == "ilimitado" then
+            computadorEstaAutorizado = true
+            stringAvisoAba = "ACESSO PERMANENTE"
+            corAvisoAba = "#00bfff"
+            if setupAvisoWindow and setupAvisoWindow.lblDiasRestantes then
+                setupAvisoWindow.lblDiasRestantes:setText("Status do Acesso: Permanente")
+                setupAvisoWindow.lblDiasRestantes:setColor("#00bfff")
+            end
+            print("[BRINQUE SCRIPTS] Administrador verificado! Acesso ilimitado concedido.")
+        else
+            local timestampVencimento = converterDataParaTimestamp(dadosDestePC.vence)
+            if timestampVencimento then
+                local segundosRestantes = timestampVencimento - os.time()
+                local diasRestantes = math.ceil(segundosRestantes / 86400)
+                if diasRestantes > 0 then
                     computadorEstaAutorizado = true
-                    stringAvisoAba = "ACESSO LIVRE (TEMP)"
+                    stringAvisoAba = "PC AUTORIZADO"
                     corAvisoAba = "#44ff44"
-                    local nomeDoBoneco = player and player:getName() or "Desconhecido"
-                    registrarNovoUsuarioNoDiscord(nomeDoBoneco, hwidDaMaquinaDoCliente, "Licenca Vencida (Liberado pelo Modo Livre)")
+                    if setupAvisoWindow and setupAvisoWindow.lblDiasRestantes then
+                        setupAvisoWindow.lblDiasRestantes:setText("Dias Restantes: " .. diasRestantes .. " dias")
+                        if diasRestantes <= 7 then
+                            setupAvisoWindow.lblDiasRestantes:setColor("#ff4444")
+                            stringAvisoAba = "RENOVAR EM BREVE"
+                            corAvisoAba = "#ff4444"
+                        else
+                            setupAvisoWindow.lblDiasRestantes:setColor("#44ff44")
+                        end
+                    end
+                    if setupAvisoWindow then setupAvisoWindow:show() end
                 else
                     stringAvisoAba = "ACESSO EXPIRADO"
-                    setupAvisoWindow.lblDiasRestantes:setText("Acesso Expirado! Bloqueado.")
-                    setupAvisoWindow.lblDiasRestantes:setColor("#ff4444")
-                    setupAvisoWindow.closeBtn:hide()
-                    setupAvisoWindow:show()
+                    if setupAvisoWindow and setupAvisoWindow.lblDiasRestantes then
+                        setupAvisoWindow.lblDiasRestantes:setText("Acesso Expirado! Bloqueado.")
+                        setupAvisoWindow.lblDiasRestantes:setColor("#ff4444")
+                    end
+                    if setupAvisoWindow and setupAvisoWindow.closeBtn then setupAvisoWindow.closeBtn:hide() end
+                    if setupAvisoWindow then setupAvisoWindow:show() end
                     MAPA_MACROS_GUILDA = {}
                 end
             end
         end
-    end
-else
-    if MODO_LIVRE_RASTREADOR then
-        computadorEstaAutorizado = true
-        stringAvisoAba = "ACESSO LIVRE"
-        corAvisoAba = "#44ff44"
-        print("[BRINQUE SCRIPTS] Modo Livre ativo. Inicializando macros desimpedidos...")
-        
-        local nomeDoBoneco = player and player:getName() or "Desconhecido"
-        registrarNovoUsuarioNoDiscord(nomeDoBoneco, hwidDaMaquinaDoCliente, "Nao Registrado (Capturado no Modo Livre)")
     else
-        setupBloqueioWindow.lblCodigoPC:setText("ID DO PC: " .. hwidDaMaquinaDoCliente)
-        setupBloqueioWindow:show()
+        if setupBloqueioWindow and setupBloqueioWindow.lblCodigoPC then
+            setupBloqueioWindow.lblCodigoPC:setText("ID DO PC: " .. hwidDaMaquinaDoCliente)
+        end
+        if setupBloqueioWindow then setupBloqueioWindow:show() end
         MAPA_MACROS_GUILDA = {}
     end
 end
-
 local ORDEM_CATEGORIAS = { "HEALING", "CAVE/TARGET", "WAR", "EXTRAS" }
 local CORES_CATEGORIAS = { ["HEALING"] = "#44ff44", ["CAVE/TARGET"] = "#00bfff", ["WAR"] = "#ff4444", ["EXTRAS"] = "#e6bc22" }
 
@@ -660,7 +706,7 @@ for _, nomeCat in ipairs(ORDEM_CATEGORIAS) do
 end
 
 -- =============================================================================
--- [BLOCO 4] EXECUTOR DE FILA HTTP E EVENTOS REMOTOS - BRINQUE SCRIPTS
+-- [PARTE 6 DE 6] FILA ULTRA RÁPIDA (200MS) E ARRANCADA DO COMPILADOR
 -- =============================================================================
 local loteJaEstaSendoBaixado = false
 local function executarFilaCustomizadaHTTP(indice)
@@ -684,47 +730,50 @@ local function executarFilaCustomizadaHTTP(indice)
                 local script, syntaxErr = loadstring(content)
                 if script then pcall(script) else print("[Erro Script] Slot falhou: " .. tostring(syntaxErr)) end
             end
-            schedule(1000, function() executarFilaCustomizadaHTTP(indice + 1) end)
+            -- VELOCIDADE PERFORMANCE: Carrega a fila em escada a cada 200 milissegundos
+            schedule(10, function() executarFilaCustomizadaHTTP(indice + 1) end)
         end)
     else
-        executarFilaCustomizadaHTTP(indice + 1)
+        schedule(10, function() executarFilaCustomizadaHTTP(indice + 1) end)
     end
 end
 
--- MONITOR DE MAQUINA CÍCLICO
 macro(600000, function() 
+    if processarSegurancaEVerificacaoDeDatas then processarSegurancaEVerificacaoDeDatas() end
     renderizarBotaoMenuLateral(computadorEstaAutorizado, stringAvisoAba, corAvisoAba)
     if not computadorEstaAutorizado then reload() end 
 end)
 
--- SISTEMA AUXILIAR DE TEXTO DO EXIVA NATIVO
 onTextMessage(function(m, t)
     if m ~= 20 then return end
     local d = t:match("is to the ([a-z-]+)%.") or t:match("is .- to the ([a-z-]+)%.")
     if d then showExivaArrow(d) end
 end)
 
--- =============================================================================
--- 💥 CORREÇÃO DO ARRANQUE: AGUARDA 3 SEGUNDOS PARA CAPTURAR O NICK REAL DO CHAR
--- =============================================================================
-schedule(3000, function()
-    -- Renderiza o botão na aba lateral normalmente
+-- TIMEOUT DE ARRANCADA SEGURO: Roda estritamente após todas as estruturas estarem na RAM
+schedule(1000, function()
+    -- 1. Processa a segurança, injeta as strings e analisa o calendário
+    if processarSegurancaEVerificacaoDeDatas then processarSegurancaEVerificacaoDeDatas() end
+    
+    -- 2. Renderiza o botão lateral correspondente na aba lateral do vBot
     renderizarBotaoMenuLateral(computadorEstaAutorizado, stringAvisoAba, corAvisoAba)
-
-    -- Se a máquina não estiver cadastrada mas o Modo Livre estiver ativo, dispara o Discord com o Nick correto
-    if not BANCO_DADOS_CLIENTES[hwidDaMaquinaDoCliente] and MODO_LIVRE_RASTREADOR then
-        local localPlayer = g_game.getLocalPlayer()
-        local nomeVerdadeiroDoChar = localPlayer and localPlayer:getName() or "Desconhecido"
-        
-        -- Dispara a função da Parte 3 passando o nome real coletado da memória
-        registrarNovoUsuarioNoDiscord(nomeVerdadeiroDoChar, hwidDaMaquinaDoCliente, "Nao Registrado (Capturado no Modo Livre)")
+    
+    local localPlayer = g_game.getLocalPlayer()
+    local nomeVerdadeiroDoChar = localPlayer and localPlayer:getName() or "Desconhecido"
+    
+    -- 3. Dispara a notificação sem duplicações (Lê a trava da Parte 4) para o seu Discord
+    if BANCO_DADOS_CLIENTES[hwidDaMaquinaDoCliente] then
+        local dadosLicenca = BANCO_DADOS_CLIENTES[hwidDaMaquinaDoCliente]
+        registrarNovoUsuarioNoDiscord(nomeVerdadeiroDoChar, hwidDaMaquinaDoCliente, "Acesso Permitido para: " .. dadosLicenca.nome)
+    else
+        registrarNovoUsuarioNoDiscord(nomeVerdadeiroDoChar, hwidDaMaquinaDoCliente, "Acesso Negado (Bloqueado em Tela)")
     end
 
-    -- Inicializa os scripts na nuvem de forma liso
+    -- 4. Inicia as injeções em nuvem se o computador constar nos autorizados da Parte 1
     if computadorEstaAutorizado then
-        print("[Brinque Scripts] Identidade confirmada. Carregando scripts em nuvem...")
+        print("[Brinque Scripts] Identidade confirmada. Carregando macros via nuvem em alta performance...")
         executarFilaCustomizadaHTTP(1)
     else
-        print(">>> [BRINQUE SCRIPTS] Bloqueado. Registro de maquina pendente...")
+        print(">>> [BRINQUE SCRIPTS] Bloqueado. Maquina invalida ou licenca vencida.")
     end
 end)
