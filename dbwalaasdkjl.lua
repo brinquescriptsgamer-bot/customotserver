@@ -550,7 +550,7 @@ end
 -- =============================================================================
 -- [PARTE 5 DE 6] ENGINE DE DATAS E ASSINATURA RIGIDA RAM - BRINQUE SCRIPTS
 -- =============================================================================
-local MAPA_MACROS_GUILDA = {
+	local MAPA_MACROS_GUILDA = {
     -- ==========================================
     -- MACROS COM PRIORIDADE (HEALING)
     -- ==========================================
