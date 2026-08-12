@@ -24,7 +24,7 @@ local pastaImg = "/bot/CUSTOM_PREMIUM/imagens/"
 -- BANCO DE DADOS DE CLIENTES RIGIDO (Apenas IDs autorizados entram no bot)
 local BANCO_DADOS_CLIENTES = {
     -- Substitua pelo seu ID definitivo "BRINQUE-GLOBAL-XXXXXXXX" que chegar no seu Discord
-    ["BRINQUE-GLOBAL-8405406"] = {
+    ["BRINQUE-GLOBAL-8405405"] = {
         nome = "Dono Brinque Scripts",
         compra = "01/08/2026",
         vence = "ilimitado"
@@ -550,7 +550,7 @@ end
 -- =============================================================================
 -- [PARTE 5 DE 6] ENGINE DE DATAS E ASSINATURA RIGIDA RAM - BRINQUE SCRIPTS
 -- =============================================================================
-	local MAPA_MACROS_GUILDA = {
+local MAPA_MACROS_GUILDA = {
     -- ==========================================
     -- MACROS COM PRIORIDADE (HEALING)
     -- ==========================================
