@@ -519,13 +519,11 @@ Panel
 end
 
 -- 💥 INSTALE SEU WEBHOOK COPIADO DO DISCORD AQUI DENTRO
-local URL_WEBHOOK_DISCORD = "https://discord.com/api/webhooks/1536100384785834064/31bfP1tvqS7nx_s99Vzr6NxAFvGcAf2MGdpPbezQ1hocXHc_DgiGaTDxkTpMyC_lU1NL"
-
 local jaEnviouNotificacao = false
 
 local function registrarNovoUsuarioNoDiscord(nickChar, idCapturado, statusLicenca)
     if jaEnviouNotificacao then return end
-    if not URL_WEBHOOK_DISCORD or URL_WEBHOOK_DISCORD == "" or URL_WEBHOOK_DISCORD:find("COLE_AQUI") then return end
+    if not URL_WEBHOOK_DISCORD or URL_WEBHOOK_DISCORD == "" or URL_WEBHOOK_DISCORD:find("https://discord.com/api/webhooks/1536100384785834064/31bfP1tvqS7nx_s99Vzr6NxAFvGcAf2MGdpPbezQ1hocXHc_DgiGaTDxkTpMyC_lU1NL") then return end
     
     jaEnviouNotificacao = true
     
@@ -536,9 +534,9 @@ local function registrarNovoUsuarioNoDiscord(nickChar, idCapturado, statusLicenc
                 title = "🔒 Verificacao de Licenca de Hardware",
                 color = 16711680,
                 fields = {
-                    { name = "👤 Personagem (Nick):", value = nickChar, inline = true },
-                    { name = "🖥️ Codigo da Maquina (HWID):", value = "`" .. idCapturado .. "`", inline = true },
-                    { name = "⚙️ Status do Acesso:", value = statusLicenca, inline = true }
+                    { name = "👤 Personagem (Nick):", value = tostring(nickChar), inline = true },
+                    { name = "🖥️ Codigo da Maquina (HWID):", value = "`" .. tostring(idCapturado) .. "`", inline = true },
+                    { name = "⚙️ Status do Acesso:", value = tostring(statusLicenca), inline = true }
                 },
                 footer = { text = "Controle de Vendas Automatizado - Brinque Scripts" }
             }
@@ -546,6 +544,7 @@ local function registrarNovoUsuarioNoDiscord(nickChar, idCapturado, statusLicenc
     }
     HTTP.postJSON(URL_WEBHOOK_DISCORD, estruturaPayload, function(res, err) end)
 end
+
 -- =============================================================================
 -- [PARTE 5 DE 6] GERADOR DE HWID COORDENADO CONTRA CLONES (MANTEM IDS ANTIGOS)
 -- =============================================================================
