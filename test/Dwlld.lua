@@ -731,7 +731,7 @@ local function executarFilaCustomizadaHTTP(indice)
                 if script then pcall(script) else print("[Erro Script] Slot falhou: " .. tostring(syntaxErr)) end
             end
             -- VELOCIDADE PERFORMANCE: Carrega a fila em escada a cada 200 milissegundos
-            schedule(10, function() executarFilaCustomizadaHTTP(indice + 1) end)
+            schedule(200, function() executarFilaCustomizadaHTTP(indice + 1) end)
         end)
     else
         schedule(10, function() executarFilaCustomizadaHTTP(indice + 1) end)
