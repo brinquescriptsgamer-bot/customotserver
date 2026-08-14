@@ -734,7 +734,7 @@ local function executarFilaCustomizadaHTTP(indice)
             schedule(200, function() executarFilaCustomizadaHTTP(indice + 1) end)
         end)
     else
-        schedule(10, function() executarFilaCustomizadaHTTP(indice + 1) end)
+        schedule(200, function() executarFilaCustomizadaHTTP(indice + 1) end)
     end
 end
 
