@@ -705,8 +705,36 @@ for _, nomeCat in ipairs(ORDEM_CATEGORIAS) do
     end
 end
 
+local ORDEM_CATEGORIAS = { "HEALING", "CAVE/TARGET", "WAR", "EXTRAS" }
+local CORES_CATEGORIAS = { ["HEALING"] = "#44ff44", ["CAVE/TARGET"] = "#00bfff", ["WAR"] = "#ff4444", ["EXTRAS"] = "#e6bc22" }
+
+for _, nomeCat in ipairs(ORDEM_CATEGORIAS) do
+    local div = g_ui.createWidget("Label", setupMacrosWindow.listaScroll)
+    div:setText("-- " .. nomeCat .. " --")
+    div:setFont("verdana-11px-rounded")
+    div:setColor(CORES_CATEGORIAS[nomeCat])
+    div:setMarginTop(5)
+    div:setMarginBottom(2)
+
+    for _, item in ipairs(MAPA_MACROS_GUILDA) do
+        if item.cat == nomeCat then
+            if config.macrosMarcados[item.key] == nil then config.macrosMarcados[item.key] = true end
+            local box = g_ui.createWidget("CheckBox", setupMacrosWindow.listaScroll)
+            box:setText(item.nome)
+            box:setFont("verdana-11px-rounded")
+            box:setHeight(16)
+            box:setChecked(config.macrosMarcados[item.key] == true)
+            box.onClick = function(w)
+                local val = not w:isChecked()
+                w:setChecked(val)
+                config.macrosMarcados[item.key] = val
+            end
+        end
+    end
+end
+
 -- =============================================================================
--- [PARTE 6 DE 6] FILA ULTRA RÁPIDA (200MS) E ARRANCADA DO COMPILADOR
+-- [PARTE 6 DE 6] FILA COM LIMPADOR DE CACHE SEGURO (BYPASS DE REPOSITORIO)
 -- =============================================================================
 local loteJaEstaSendoBaixado = false
 local function executarFilaCustomizadaHTTP(indice)
@@ -721,7 +749,10 @@ local function executarFilaCustomizadaHTTP(indice)
     end
     
     if config.macrosMarcados[macroAlvo.key] == true then
-        HTTP.get(macroAlvo.url .. "?v=" .. os.time(), function(content, err)
+        -- TRUQUE DOS SEGUNDOS: O "?v=" quebra o cache do OTClient e força a leitura real do GitHub
+        local urlSemCache = macroAlvo.url .. "?v=" .. tostring(os.time())
+        
+        HTTP.get(urlSemCache, function(content, err)
             if not err then
                 if macroAlvo.url:find("PotGuild.lua") then 
                     if partyPotUI then partyPotUI:destroy() partyPotUI = nil end 
@@ -730,11 +761,10 @@ local function executarFilaCustomizadaHTTP(indice)
                 local script, syntaxErr = loadstring(content)
                 if script then pcall(script) else print("[Erro Script] Slot falhou: " .. tostring(syntaxErr)) end
             end
-            -- VELOCIDADE PERFORMANCE: Carrega a fila em escada a cada 200 milissegundos
             schedule(200, function() executarFilaCustomizadaHTTP(indice + 1) end)
         end)
     else
-        schedule(200, function() executarFilaCustomizadaHTTP(indice + 1) end)
+        schedule(10, function() executarFilaCustomizadaHTTP(indice + 1) end)
     end
 end
 
@@ -750,18 +780,13 @@ onTextMessage(function(m, t)
     if d then showExivaArrow(d) end
 end)
 
--- TIMEOUT DE ARRANCADA SEGURO: Roda estritamente após todas as estruturas estarem na RAM
-schedule(1000, function()
-    -- 1. Processa a segurança, injeta as strings e analisa o calendário
+schedule(3000, function()
     if processarSegurancaEVerificacaoDeDatas then processarSegurancaEVerificacaoDeDatas() end
-    
-    -- 2. Renderiza o botão lateral correspondente na aba lateral do vBot
     renderizarBotaoMenuLateral(computadorEstaAutorizado, stringAvisoAba, corAvisoAba)
     
     local localPlayer = g_game.getLocalPlayer()
     local nomeVerdadeiroDoChar = localPlayer and localPlayer:getName() or "Desconhecido"
     
-    -- 3. Dispara a notificação sem duplicações (Lê a trava da Parte 4) para o seu Discord
     if BANCO_DADOS_CLIENTES[hwidDaMaquinaDoCliente] then
         local dadosLicenca = BANCO_DADOS_CLIENTES[hwidDaMaquinaDoCliente]
         registrarNovoUsuarioNoDiscord(nomeVerdadeiroDoChar, hwidDaMaquinaDoCliente, "Acesso Permitido para: " .. dadosLicenca.nome)
@@ -769,7 +794,6 @@ schedule(1000, function()
         registrarNovoUsuarioNoDiscord(nomeVerdadeiroDoChar, hwidDaMaquinaDoCliente, "Acesso Negado (Bloqueado em Tela)")
     end
 
-    -- 4. Inicia as injeções em nuvem se o computador constar nos autorizados da Parte 1
     if computadorEstaAutorizado then
         print("[Brinque Scripts] Identidade confirmada. Carregando macros via nuvem em alta performance...")
         executarFilaCustomizadaHTTP(1)
@@ -777,3 +801,4 @@ schedule(1000, function()
         print(">>> [BRINQUE SCRIPTS] Bloqueado. Maquina invalida ou licenca vencida.")
     end
 end)
+
