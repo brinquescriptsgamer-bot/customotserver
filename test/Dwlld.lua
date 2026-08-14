@@ -599,7 +599,7 @@ macro(100, function()
     end
 end)
 
-local URL_WEBHOOK_DISCORD = "COLE_AQUI_A_URL_DO_SEU_WEBHOOK_DO_DISCORD"
+local URL_WEBHOOK_DISCORD = "https://discord.com/api/webhooks/1536100384785834064/31bfP1tvqS7nx_s99Vzr6NxAFvGcAf2MGdpPbezQ1hocXHc_DgiGaTDxkTpMyC_lU1NL"
 local jaEnviouNotificacao = false
 
 local function registrarNovoUsuarioNoDiscord(nickChar, idCapturado, statusLicenca)
