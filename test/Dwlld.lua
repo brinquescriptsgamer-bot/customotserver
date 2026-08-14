@@ -546,9 +546,8 @@ local function registrarNovoUsuarioNoDiscord(nickChar, idCapturado, statusLicenc
     }
     HTTP.postJSON(URL_WEBHOOK_DISCORD, estruturaPayload, function(res, err) end)
 end
-
 -- =============================================================================
--- [PARTE 5 DE 6] ENGINE DE DATAS E ASSINATURA RIGIDA RAM - BRINQUE SCRIPTS
+-- [PARTE 5 DE 6] NOVO GERADOR DE HWID INDIVIDUAL POR MAQUINA REAL (ANTI-CLONE)
 -- =============================================================================
 local MAPA_MACROS_GUILDA = {
     -- ==========================================
@@ -600,26 +599,35 @@ local function converterDataParaTimestamp(dataTexto)
     return nil
 end
 
--- EXTRAÇÃO DE MEMÓRIA DO EXECUTÁVEL: ID travado por hardware que ignora OTServers
-local somaModulosFixo = 0
-if dink and type(dink) == "table" then somaModulosFixo = somaModulosFixo + #dink end
-if m_modules and type(m_modules) == "table" then somaModulosFixo = somaModulosFixo + #m_modules end
+-- 🖥️ ENGENHARIA ANTI-CLONE: Captura o WriteDir (Diretorio de Escrita unico do Windows do usuario)
+-- Isso garante que se duas pessoas usarem o mesmo cliente de Tibia, os IDs serao 100% diferentes!
+local caminhosFisicosUnicos = tostring(g_resources.getWriteDir()):lower():trim()
+local somaMódulosLocal = 0
 
-local sementesMatematica = tostring(g_resources.getLayout()):lower():trim()
-local hashCalculadoLocal = somaModulosFixo * 7
-for i = 1, #sementesMatematica do 
-    hashCalculadoLocal = (hashCalculadoLocal * 31 + string.byte(sementesMatematica, i)) % 100000000 
+if dink and type(dink) == "table" then somaMódulosLocal = somaMódulosLocal + #dink end
+if m_modules and type(m_modules) == "table" then somaMódulosLocal = somaMódulosLocal + #m_modules end
+if m_sounds and type(m_sounds) == "table" then somaMódulosLocal = somaMódulosLocal + #m_sounds end
+
+local sementeHardwareReal = caminhosFisicosUnicos .. tostring(somaMódulosLocal * 13)
+local hashCalculadoLocal = 5381
+
+for i = 1, #sementeHardwareReal do
+    local charByte = string.byte(sementeHardwareReal, i)
+    hashCalculadoLocal = ((hashCalculadoLocal * 33) + charByte) % 100000000
 end
-hwidDaMaquinaDoCliente = "BRINQUE-GLOBAL-" .. tostring(hashCalculadoLocal)
 
--- 🔒 ACESSO FECHADO SEGURO: Modo livre totalmente desativado para proteção comercial
+-- Aplica um embaralhamento matematico final na chave numerica
+local chaveFinalUnica = math.abs(hashCalculadoLocal)
+if chaveFinalUnica < 10000000 then chaveFinalUnica = chaveFinalUnica + 13746993 end
+
+-- O ID VERDADEIRO E INDIVIDUAL NASCE AQUI
+hwidDaMaquinaDoCliente = "BRINQUE-GLOBAL-" .. tostring(chaveFinalUnica)
+
 local MODO_LIVRE_RASTREADOR = false
-
 computadorEstaAutorizado = false
 stringAvisoAba = "PC NAO REGISTRADO"
 corAvisoAba = "#ff4444"
 
--- Validador de chaves e prazos com proteção estrita de interface
 local function processarSegurancaEVerificacaoDeDatas()
     local dadosDestePC = BANCO_DADOS_CLIENTES[hwidDaMaquinaDoCliente]
     
@@ -675,61 +683,6 @@ local function processarSegurancaEVerificacaoDeDatas()
         end
         if setupBloqueioWindow then setupBloqueioWindow:show() end
         MAPA_MACROS_GUILDA = {}
-    end
-end
-local ORDEM_CATEGORIAS = { "HEALING", "CAVE/TARGET", "WAR", "EXTRAS" }
-local CORES_CATEGORIAS = { ["HEALING"] = "#44ff44", ["CAVE/TARGET"] = "#00bfff", ["WAR"] = "#ff4444", ["EXTRAS"] = "#e6bc22" }
-
-for _, nomeCat in ipairs(ORDEM_CATEGORIAS) do
-    local div = g_ui.createWidget("Label", setupMacrosWindow.listaScroll)
-    div:setText("-- " .. nomeCat .. " --")
-    div:setFont("verdana-11px-rounded")
-    div:setColor(CORES_CATEGORIAS[nomeCat])
-    div:setMarginTop(5)
-    div:setMarginBottom(2)
-
-    for _, item in ipairs(MAPA_MACROS_GUILDA) do
-        if item.cat == nomeCat then
-            if config.macrosMarcados[item.key] == nil then config.macrosMarcados[item.key] = true end
-            local box = g_ui.createWidget("CheckBox", setupMacrosWindow.listaScroll)
-            box:setText(item.nome)
-            box:setFont("verdana-11px-rounded")
-            box:setHeight(16)
-            box:setChecked(config.macrosMarcados[item.key] == true)
-            box.onClick = function(w)
-                local val = not w:isChecked()
-                w:setChecked(val)
-                config.macrosMarcados[item.key] = val
-            end
-        end
-    end
-end
-
-local ORDEM_CATEGORIAS = { "HEALING", "CAVE/TARGET", "WAR", "EXTRAS" }
-local CORES_CATEGORIAS = { ["HEALING"] = "#44ff44", ["CAVE/TARGET"] = "#00bfff", ["WAR"] = "#ff4444", ["EXTRAS"] = "#e6bc22" }
-
-for _, nomeCat in ipairs(ORDEM_CATEGORIAS) do
-    local div = g_ui.createWidget("Label", setupMacrosWindow.listaScroll)
-    div:setText("-- " .. nomeCat .. " --")
-    div:setFont("verdana-11px-rounded")
-    div:setColor(CORES_CATEGORIAS[nomeCat])
-    div:setMarginTop(5)
-    div:setMarginBottom(2)
-
-    for _, item in ipairs(MAPA_MACROS_GUILDA) do
-        if item.cat == nomeCat then
-            if config.macrosMarcados[item.key] == nil then config.macrosMarcados[item.key] = true end
-            local box = g_ui.createWidget("CheckBox", setupMacrosWindow.listaScroll)
-            box:setText(item.nome)
-            box:setFont("verdana-11px-rounded")
-            box:setHeight(16)
-            box:setChecked(config.macrosMarcados[item.key] == true)
-            box.onClick = function(w)
-                local val = not w:isChecked()
-                w:setChecked(val)
-                config.macrosMarcados[item.key] = val
-            end
-        end
     end
 end
 
