@@ -421,21 +421,18 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "    margin-right: 15\n" ..
 "    @onClick: self:getParent():hide()\n"
 -- =============================================================================
--- [PARTE 4 DE 6] INICIALIZAÇÃO DE PANÉIS, LINKS E WEBHOOK DISCORD PROTEGIDO
+-- [PARTE 4 DE 6] INICIALIZACAO GRAFICA, CLIQUES E MOTOR DE ANIMACAO DE CORES
 -- =============================================================================
--- 1. FUNÇÃO ANCORADA NO TOPO: Registra a leitura do navegador na memória primeiro
 local function abrirLinkNoNavegadorReal(urlDestino)
     if g_signals and g_signals.openUrl then g_signals.openUrl(urlDestino)
     elseif g_platform and g_platform.openUrl then g_platform.openUrl(urlDestino)
     else print(">>> [BRINQUE] Link para copiar: " .. urlDestino) end
 end
 
--- 2. DESTRUIÇÃO DE COMPONENTES ANTIGOS DUPLICADOS
 if widgetRaizDoJogo:recursiveGetChildById("janelaAvisoLicenca") then widgetRaizDoJogo:recursiveGetChildById("janelaAvisoLicenca"):destroy() end
 if widgetRaizDoJogo:recursiveGetChildById("janelaBloqueioHWID") then widgetRaizDoJogo:recursiveGetChildById("janelaBloqueioHWID"):destroy() end
 if widgetRaizDoJogo:recursiveGetChildById("janelaEscolhaMacros") then widgetRaizDoJogo:recursiveGetChildById("janelaEscolhaMacros"):destroy() end
 
--- 3. CRIAÇÃO FÍSICA SEGURA DOS COMPONENTES OTUI
 local setupAvisoWindow    = setupUI(designAvisoLicencaOTUI, widgetRaizDoJogo)
 local setupBloqueioWindow = setupUI(designBloqueioHWIDOTUI, widgetRaizDoJogo)
 local setupMacrosWindow   = setupUI(designPrincipalOTUI, widgetRaizDoJogo)
@@ -444,25 +441,20 @@ setupAvisoWindow:hide()
 setupBloqueioWindow:hide()
 setupMacrosWindow:hide()
 
--- 4. TRAVA DE IMAGENS FANTASMAS
-if not g_resources.fileExists(pastaImg .. "butaoazulverme.png") then
-    if setupMacrosWindow.imgFundoInsta then setupMacrosWindow.imgFundoInsta:setImageSource("") end
-    if setupMacrosWindow.imgFundoWhats then setupMacrosWindow.imgFundoWhats:setImageSource("") end
-    if setupMacrosWindow.imgFundoDiscord then setupMacrosWindow.imgFundoDiscord:setImageSource("") end
-    if setupMacrosWindow.imgFundoYoutube then setupMacrosWindow.imgFundoYoutube:setImageSource("") end
-    if setupAvisoWindow.imgFundoBtnRenovar then setupAvisoWindow.imgFundoBtnRenovar:setImageSource("") end
-    if setupBloqueioWindow.imgFundoBtnSuporte then setupBloqueioWindow.imgFundoBtnSuporte:setImageSource("") end
+-- CONEXOES DOS CLIQUES DA GRADE DE BOTOES
+local grade = setupMacrosWindow.pnlGradeBotoes
+if grade then
+    if grade.btnLetraD then grade.btnLetraD.onClick = function() abrirLinkNoNavegadorReal(LINK_DISCORD) end end
+    if grade.btnLetraI then grade.btnLetraI.onClick = function() abrirLinkNoNavegadorReal(LINK_INSTAGRAM) end end
+    if grade.btnLetraS then grade.btnLetraS.onClick = function() abrirLinkNoNavegadorReal(LINK_SITE) end end
+    if grade.btnLetraT then grade.btnLetraT.onClick = function() abrirLinkNoNavegadorReal(LINK_TIKTOK) end end
+    if grade.btnLetraW then grade.btnLetraW.onClick = function() abrirLinkNoNavegadorReal(LINK_WHATSAPP) end end
+    if grade.btnLetraY then grade.btnLetraY.onClick = function() abrirLinkNoNavegadorReal(LINK_YOUTUBE) end end
 end
 
--- 5. ATRIBUIÇÃO DOS EVENTOS DE CLIQUE (AGORA ENXERGANDO A FUNÇÃO PERFEITAMENTE)
-if setupMacrosWindow.btnInstagram then setupMacrosWindow.btnInstagram.onClick = function() abrirLinkNoNavegadorReal(LINK_INSTAGRAM) end end
-if setupMacrosWindow.btnWhatsApp then setupMacrosWindow.btnWhatsApp.onClick  = function() abrirLinkNoNavegadorReal(LINK_WHATSAPP) end end
-if setupMacrosWindow.btnDiscord then setupMacrosWindow.btnDiscord.onClick   = function() abrirLinkNoNavegadorReal(LINK_DISCORD) end end
-if setupMacrosWindow.btnYouTube then setupMacrosWindow.btnYouTube.onClick   = function() abrirLinkNoNavegadorReal(LINK_YOUTUBE) end end
-
-if setupAvisoWindow.btnRenovar then setupAvisoWindow.btnRenovar.onClick = function() abrirLinkNoNavegadorReal(LINK_RENOVACAO) end end
-if setupAvisoWindow.closeBtn then setupAvisoWindow.closeBtn.onClick   = function() setupAvisoWindow:hide() end end
-if setupBloqueioWindow.btnFalarAdmin then setupBloqueioWindow.btnFalarAdmin.onClick = function() abrirLinkNoNavegadorReal(LINK_RENOVACAO) end end
+setupAvisoWindow.btnRenovar.onClick = function() abrirLinkNoNavegadorReal(LINK_RENOVACAO) end
+setupAvisoWindow.closeBtn.onClick   = function() setupAvisoWindow:hide() end
+setupBloqueioWindow.btnFalarAdmin.onClick = function() abrirLinkNoNavegadorReal(LINK_RENOVACAO) end
 
 local uiTravaAba = nil
 local function renderizarBotaoMenuLateral(maquinaValida, mensagemStatus, corStatus)
@@ -518,12 +510,101 @@ Panel
     end
 end
 
--- 💥 INSTALE SEU WEBHOOK COPIADO DO DISCORD AQUI DENTRO
+-- MOTOR DE ANIMACAO EM SEGUNDO PLANO (100MS) - MARCA E BOTOES DA GRADE
+local TEXTO_MARCA = "BRINQUE SCRIPTS"
+local COR_APAGADO = "#000000"
+local COR_AZUL_CELESTE = "#00BFFF"
+local CORES_SEQUENCIA = { "#0000FF", "#FF0000", "#FFFFFF", "#000000" }
+
+local transitionPoint = -1
+local isFilling = true
+local piscadaActive = false
+local piscadaTimer = 0
+local piscadaColorIndex = 1
+local opacidadeAtualMapeada = 1.0
+local direcaoOpacidadeSubindo = false
+
+macro(100, function()
+    if direcaoOpacidadeSubindo then
+        opacidadeAtualMapeada = opacidadeAtualMapeada + 0.1
+        if opacidadeAtualMapeada >= 1.0 then opacidadeAtualMapeada = 1.0 direcaoOpacidadeSubindo = false end
+    else
+        opacidadeAtualMapeada = opacidadeAtualMapeada - 0.1
+        if opacidadeAtualMapeada <= 0.4 then opacidadeAtualMapeada = 0.4 direcaoOpacidadeSubindo = true end
+    end
+
+    if setupMacrosWindow and setupMacrosWindow:isVisible() and setupMacrosWindow.lblMarcaBrinqueTopo then
+        local coloredParts = {}
+        if not isFilling and transitionPoint < 0 and not piscadaActive then
+            piscadaActive = true
+            piscadaTimer = 0
+            piscadaColorIndex = 1
+        end
+
+        for i = 1, #TEXTO_MARCA do
+            local char = TEXTO_MARCA:sub(i, i)
+            local currentColor = COR_APAGADO
+
+            if piscadaActive and i >= (#TEXTO_MARCA - 6) then
+                if (piscadaTimer % 200) < 100 then
+                    currentColor = CORES_SEQUENCIA[piscadaColorIndex]
+                else
+                    currentColor = COR_APAGADO
+                end
+            else
+                if isFilling then
+                    currentColor = (i <= transitionPoint) and COR_AZUL_CELESTE or COR_APAGADO
+                else
+                    currentColor = (i <= transitionPoint) and COR_APAGADO or COR_AZUL_CELESTE
+                end
+            end
+            table.insert(coloredParts, char)
+            table.insert(coloredParts, currentColor)
+        end
+        setupMacrosWindow.lblMarcaBrinqueTopo:setColoredText(coloredParts)
+
+        if not piscadaActive then
+            if isFilling then
+                transitionPoint = transitionPoint + 1
+                if transitionPoint > #TEXTO_MARCA then
+                    isFilling = false
+                    transitionPoint = #TEXTO_MARCA
+                end
+            else
+                transitionPoint = transitionPoint - 1
+            end
+        else
+            piscadaTimer = piscadaTimer + 100
+            if piscadaTimer % 300 == 0 then
+                piscadaColorIndex = piscadaColorIndex + 1
+                if piscadaColorIndex > #CORES_SEQUENCIA then piscadaColorIndex = 1 end
+            end
+            if piscadaTimer >= 3000 then
+                isFilling = true
+                transitionPoint = -1
+                piscadaActive = false
+                piscadaTimer = 0
+                piscadaColorIndex = 1
+            end
+        end
+    end
+
+    if setupMacrosWindow and setupMacrosWindow:isVisible() and grade then
+        if grade.btnLetraD then grade.btnLetraD:setColoredText({ "[ D ]", (opacidadeAtualMapeada > 0.7) and "#7289DA" or COR_APAGADO }) end
+        if grade.btnLetraI then grade.btnLetraI:setColoredText({ "[ I ]", (opacidadeAtualMapeada > 0.7) and "#E1306C" or COR_APAGADO }) end
+        if grade.btnLetraS then grade.btnLetraS:setColoredText({ "[ S ]", (opacidadeAtualMapeada > 0.7) and "#008080" or COR_APAGADO }) end
+        if grade.btnLetraT then grade.btnLetraT:setColoredText({ "[ T ]", (opacidadeAtualMapeada > 0.7) and "#EE1D52" or COR_APAGADO }) end
+        if grade.btnLetraW then grade.btnLetraW:setColoredText({ "[ W ]", (opacidadeAtualMapeada > 0.7) and "#25D366" or COR_APAGADO }) end
+        if grade.btnLetraY then grade.btnLetraY:setColoredText({ "[ Y ]", (opacidadeAtualMapeada > 0.7) and "#FF0000" or COR_APAGADO }) end
+    end
+end)
+
+local URL_WEBHOOK_DISCORD = "COLE_AQUI_A_URL_DO_SEU_WEBHOOK_DO_DISCORD"
 local jaEnviouNotificacao = false
 
 local function registrarNovoUsuarioNoDiscord(nickChar, idCapturado, statusLicenca)
     if jaEnviouNotificacao then return end
-    if not URL_WEBHOOK_DISCORD or URL_WEBHOOK_DISCORD == "" or URL_WEBHOOK_DISCORD:find("https://discord.com/api/webhooks/1536100384785834064/31bfP1tvqS7nx_s99Vzr6NxAFvGcAf2MGdpPbezQ1hocXHc_DgiGaTDxkTpMyC_lU1NL") then return end
+    if not URL_WEBHOOK_DISCORD or URL_WEBHOOK_DISCORD == "" or URL_WEBHOOK_DISCORD:find("COLE_AQUI") then return end
     
     jaEnviouNotificacao = true
     
@@ -544,9 +625,8 @@ local function registrarNovoUsuarioNoDiscord(nickChar, idCapturado, statusLicenc
     }
     HTTP.postJSON(URL_WEBHOOK_DISCORD, estruturaPayload, function(res, err) end)
 end
-
 -- =============================================================================
--- [PARTE 5 DE 6] GERADOR DE HWID COORDENADO CONTRA CLONES (MANTEM IDS ANTIGOS)
+-- [PARTE 5 DE 6] RESTAURACAO DO SEU CALCULO DE HARDWARE ANTIGO E ORIGINAL
 -- =============================================================================
 local MAPA_MACROS_GUILDA = {
     -- ==========================================
@@ -598,7 +678,7 @@ local function converterDataParaTimestamp(dataTexto)
     return nil
 end
 
--- MANTEM A SUA SEMENTE ORIGINAL DO LAYOUT (Para nao alterar o seu ID atual)
+-- SEU METODO COMPLETO ANTIGO RESTAURADO: IDs intactos sem sofrer alteracoes
 local somaModulosFixo = 0
 if dink and type(dink) == "table" then somaModulosFixo = somaModulosFixo + #dink end
 if m_modules and type(m_modules) == "table" then somaModulosFixo = somaModulosFixo + #m_modules end
@@ -608,22 +688,7 @@ local hashCalculadoLocal = somaModulosFixo * 7
 for i = 1, #sementesMatematica do 
     hashCalculadoLocal = (hashCalculadoLocal * 31 + string.byte(sementesMatematica, i)) % 100000000 
 end
-
--- ADICIONA VARREDURA DE COMPATIBILIDADE DE SEGURANCA CONTRA DISPOSITIVOS GÊMEOS
--- Soma o byte do WorkDir (Pasta de instalacao local) apenas se for maquina de cliente externo
-local pastaTrabalhoCliente = tostring(g_resources.getWorkDir()):lower()
-local variacaoSegura = 0
-for i = 1, #pastaTrabalhoCliente do
-    variacaoSegura = (variacaoSegura + string.byte(pastaTrabalhoCliente, i)) % 50
-end
-
--- Se for a sua maquina original, o calculo ignora a variacao e matem seu ID identico!
-local hashFinalSeguro = hashCalculadoLocal
-if variacaoSegura > 0 and not sementesMatematica:find("admin") then
-    hashFinalSeguro = (hashCalculadoLocal + variacaoSegura) % 100000000
-end
-
-hwidDaMaquinaDoCliente = "BRINQUE-GLOBAL-" .. tostring(hashFinalSeguro)
+hwidDaMaquinaDoCliente = "BRINQUE-GLOBAL-" .. tostring(hashCalculadoLocal)
 
 local MODO_LIVRE_RASTREADOR = false
 computadorEstaAutorizado = false
@@ -687,6 +752,33 @@ local function processarSegurancaEVerificacaoDeDatas()
         MAPA_MACROS_GUILDA = {}
     end
 end
+local ORDEM_CATEGORIAS = { "HEALING", "CAVE/TARGET", "WAR", "EXTRAS" }
+local CORES_CATEGORIAS = { ["HEALING"] = "#44ff44", ["CAVE/TARGET"] = "#00bfff", ["WAR"] = "#ff4444", ["EXTRAS"] = "#e6bc22" }
+
+for _, nomeCat in ipairs(ORDEM_CATEGORIAS) do
+    local div = g_ui.createWidget("Label", setupMacrosWindow.listaScroll)
+    div:setText("-- " .. nomeCat .. " --")
+    div:setFont("verdana-11px-rounded")
+    div:setColor(CORES_CATEGORIAS[nomeCat])
+    div:setMarginTop(5)
+    div:setMarginBottom(2)
+
+    for _, item in ipairs(MAPA_MACROS_GUILDA) do
+        if item.cat == nomeCat then
+            if config.macrosMarcados[item.key] == nil then config.macrosMarcados[item.key] = true end
+            local box = g_ui.createWidget("CheckBox", setupMacrosWindow.listaScroll)
+            box:setText(item.nome)
+            box:setFont("verdana-11px-rounded")
+            box:setHeight(16)
+            box:setChecked(config.macrosMarcados[item.key] == true)
+            box.onClick = function(w)
+                local val = not w:isChecked()
+                w:setChecked(val)
+                config.macrosMarcados[item.key] = val
+            end
+        end
+    end
+end
 
 -- =============================================================================
 -- [PARTE 6 DE 6] FILA COM LIMPADOR DE CACHE SEGURO (BYPASS DE REPOSITORIO)
@@ -704,7 +796,6 @@ local function executarFilaCustomizadaHTTP(indice)
     end
     
     if config.macrosMarcados[macroAlvo.key] == true then
-        -- TRUQUE DOS SEGUNDOS: O "?v=" quebra o cache do OTClient e força a leitura real do GitHub
         local urlSemCache = macroAlvo.url .. "?v=" .. tostring(os.time())
         
         HTTP.get(urlSemCache, function(content, err)
@@ -735,6 +826,7 @@ onTextMessage(function(m, t)
     if d then showExivaArrow(d) end
 end)
 
+-- AMARRACAO FINAL DINAMICA DA ARRANCADA PROTEGIDA
 schedule(3000, function()
     if processarSegurancaEVerificacaoDeDatas then processarSegurancaEVerificacaoDeDatas() end
     renderizarBotaoMenuLateral(computadorEstaAutorizado, stringAvisoAba, corAvisoAba)
@@ -742,11 +834,14 @@ schedule(3000, function()
     local localPlayer = g_game.getLocalPlayer()
     local nomeVerdadeiroDoChar = localPlayer and localPlayer:getName() or "Desconhecido"
     
-    if BANCO_DADOS_CLIENTES[hwidDaMaquinaDoCliente] then
-        local dadosLicenca = BANCO_DADOS_CLIENTES[hwidDaMaquinaDoCliente]
-        registrarNovoUsuarioNoDiscord(nomeVerdadeiroDoChar, hwidDaMaquinaDoCliente, "Acesso Permitido para: " .. dadosLicenca.nome)
+    -- Captura dinamicamente o HWID calculado especificamente no PC ativo do login
+    local idDestaMaquina = hwidDaMaquinaDoCliente or "BRINQUE-GLOBAL-DESCONHECIDO"
+    
+    if BANCO_DADOS_CLIENTES[idDestaMaquina] then
+        local dadosLicenca = BANCO_DADOS_CLIENTES[idDestaMaquina]
+        registrarNovoUsuarioNoDiscord(nomeVerdadeiroDoChar, idDestaMaquina, "Acesso Permitido para: " .. dadosLicenca.nome)
     else
-        registrarNovoUsuarioNoDiscord(nomeVerdadeiroDoChar, hwidDaMaquinaDoCliente, "Acesso Negado (Bloqueado em Tela)")
+        registrarNovoUsuarioNoDiscord(nomeVerdadeiroDoChar, idDestaMaquina, "Acesso Negado (Bloqueado em Tela)")
     end
 
     if computadorEstaAutorizado then
@@ -756,4 +851,3 @@ schedule(3000, function()
         print(">>> [BRINQUE SCRIPTS] Bloqueado. Maquina invalida ou licenca vencida.")
     end
 end)
-
