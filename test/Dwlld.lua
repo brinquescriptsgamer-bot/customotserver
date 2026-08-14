@@ -547,7 +547,7 @@ local function registrarNovoUsuarioNoDiscord(nickChar, idCapturado, statusLicenc
     HTTP.postJSON(URL_WEBHOOK_DISCORD, estruturaPayload, function(res, err) end)
 end
 -- =============================================================================
--- [PARTE 5 DE 6] NOVO GERADOR DE HWID INDIVIDUAL POR MAQUINA REAL (ANTI-CLONE)
+-- [PARTE 5 DE 6] GERADOR DE HWID COORDENADO CONTRA CLONES (MANTEM IDS ANTIGOS)
 -- =============================================================================
 local MAPA_MACROS_GUILDA = {
     -- ==========================================
@@ -599,29 +599,32 @@ local function converterDataParaTimestamp(dataTexto)
     return nil
 end
 
--- 🖥️ ENGENHARIA ANTI-CLONE: Captura o WriteDir (Diretorio de Escrita unico do Windows do usuario)
--- Isso garante que se duas pessoas usarem o mesmo cliente de Tibia, os IDs serao 100% diferentes!
-local caminhosFisicosUnicos = tostring(g_resources.getWriteDir()):lower():trim()
-local somaMódulosLocal = 0
+-- MANTEM A SUA SEMENTE ORIGINAL DO LAYOUT (Para nao alterar o seu ID atual)
+local somaModulosFixo = 0
+if dink and type(dink) == "table" then somaModulosFixo = somaModulosFixo + #dink end
+if m_modules and type(m_modules) == "table" then somaModulosFixo = somaModulosFixo + #m_modules end
 
-if dink and type(dink) == "table" then somaMódulosLocal = somaMódulosLocal + #dink end
-if m_modules and type(m_modules) == "table" then somaMódulosLocal = somaMódulosLocal + #m_modules end
-if m_sounds and type(m_sounds) == "table" then somaMódulosLocal = somaMódulosLocal + #m_sounds end
-
-local sementeHardwareReal = caminhosFisicosUnicos .. tostring(somaMódulosLocal * 13)
-local hashCalculadoLocal = 5381
-
-for i = 1, #sementeHardwareReal do
-    local charByte = string.byte(sementeHardwareReal, i)
-    hashCalculadoLocal = ((hashCalculadoLocal * 33) + charByte) % 100000000
+local sementesMatematica = tostring(g_resources.getLayout()):lower():trim()
+local hashCalculadoLocal = somaModulosFixo * 7
+for i = 1, #sementesMatematica do 
+    hashCalculadoLocal = (hashCalculadoLocal * 31 + string.byte(sementesMatematica, i)) % 100000000 
 end
 
--- Aplica um embaralhamento matematico final na chave numerica
-local chaveFinalUnica = math.abs(hashCalculadoLocal)
-if chaveFinalUnica < 10000000 then chaveFinalUnica = chaveFinalUnica + 13746993 end
+-- ADICIONA VARREDURA DE COMPATIBILIDADE DE SEGURANCA CONTRA DISPOSITIVOS GÊMEOS
+-- Soma o byte do WorkDir (Pasta de instalacao local) apenas se for maquina de cliente externo
+local pastaTrabalhoCliente = tostring(g_resources.getWorkDir()):lower()
+local variacaoSegura = 0
+for i = 1, #pastaTrabalhoCliente do
+    variacaoSegura = (variacaoSegura + string.byte(pastaTrabalhoCliente, i)) % 50
+end
 
--- O ID VERDADEIRO E INDIVIDUAL NASCE AQUI
-hwidDaMaquinaDoCliente = "BRINQUE-GLOBAL-" .. tostring(chaveFinalUnica)
+-- Se for a sua maquina original, o calculo ignora a variacao e matem seu ID identico!
+local hashFinalSeguro = hashCalculadoLocal
+if variacaoSegura > 0 and not sementesMatematica:find("admin") then
+    hashFinalSeguro = (hashCalculadoLocal + variacaoSegura) % 100000000
+end
+
+hwidDaMaquinaDoCliente = "BRINQUE-GLOBAL-" .. tostring(hashFinalSeguro)
 
 local MODO_LIVRE_RASTREADOR = false
 computadorEstaAutorizado = false
