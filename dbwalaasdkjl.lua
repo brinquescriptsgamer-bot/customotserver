@@ -84,9 +84,8 @@ local LINK_YOUTUBE   = "https://youtube.com"
 
 local script_path = "/scripts_storage/"
 
--- Criamos as variaveis globais vazias para a Parte 5 preencher dinamicamente com segurança
-hwidDaMaquinaDoCliente = "BRINQUE-GLOBAL-PENDENTE"
-localPlayerOriginal = g_game.getLocalPlayer()
+-- 🧼 LIMPEZA EXTRA: Declaramos a variavel vazia para a Parte 5 preencher com o ID real de cada PC
+hwidDaMaquinaDoCliente = nil
 
 -- =============================================================================
 -- [PARTE 2 DE 6] STRINGS OTUI ENGENHARIZADAS (JANELAS A E B COM ANCHOR LAYOUT)
