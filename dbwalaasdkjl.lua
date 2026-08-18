@@ -32,7 +32,7 @@ local BANCO_DADOS_CLIENTES = {
         compra = "01/08/2026",
         vence = "ilimitado"
     },
-    ["BRINQUE-GLOBAL-8405406"] = {
+    ["BRINQUE-GLOBAL-45525429"] = {
         nome = "Patrocinador Oficial",
         compra = "01/08/2026",
         vence = "ilimitado"
