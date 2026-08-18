@@ -1,3 +1,6 @@
+-- =============================================================================
+-- [BRINQUE SCRIPTS] PAINEL GERAL CENTRAL PREMIUM - PARTE 1 DE 6 CORRIGIDA
+-- =============================================================================
 setDefaultTab("GUILD")
 
 local panelName = "painelBrinqueScripts"
@@ -18,7 +21,7 @@ local config = storage[panelName]
 -- =============================================================================
 -- [BANCO DE DADOS FECHADO E DIRETÓRIO - BRINQUE SCRIPTS]
 -- =============================================================================
-local LINK_RENOVACAO = "https://wa.me/qr/QHQWPAJNPYRDJ1" -- Seu link de atendimento
+local LINK_RENOVACAO = "https://wa.me" -- Seu link de atendimento
 local pastaImg = "/bot/CUSTOM_PREMIUM/imagens/"
 
 -- BANCO DE DADOS DE CLIENTES RIGIDO (Apenas IDs autorizados entram no bot)
@@ -46,17 +49,17 @@ local BANCO_DADOS_CLIENTES = {
         compra = "11/08/2026",
         vence = "12/09/2026"
     },
-	    ["BRINQUE-GLOBAL-8481060"] = {
+	["BRINQUE-GLOBAL-8481060"] = {
         nome = "Kyan Rodrigo",
         compra = "11/08/2026",
         vence = "12/09/2026"
     },
-		    ["BRINQUE-GLOBAL-53228478"] = {
+	["BRINQUE-GLOBAL-53228478"] = {
         nome = "Adriiano",
         compra = "11/08/2026",
         vence = "12/09/2026"
     },
-		    ["BRINQUE-GLOBAL-38396807"] = {
+	["BRINQUE-GLOBAL-38396807"] = {
         nome = "Matheus",
         compra = "11/08/2026",
         vence = "12/09/2026"
@@ -74,12 +77,17 @@ local BANCO_DADOS_CLIENTES = {
     }
 }
 
-local LINK_INSTAGRAM = "https://www.instagram.com/brinquescriptsgamer?igsh=dXhhN2MxNWhxMm9m"
-local LINK_WHATSAPP  = "https://chat.whatsapp.com/D4WHVuAy41t6uQ6QZ3ibtR"
-local LINK_DISCORD   = "https://discord.gg/BRNzJ7cZjq"
+local LINK_INSTAGRAM = "https://instagram.com"
+local LINK_WHATSAPP  = "https://whatsapp.com"
+local LINK_DISCORD   = "https://discord.gg"
 local LINK_YOUTUBE   = "https://youtube.com"
 
 local script_path = "/scripts_storage/"
+
+-- Criamos as variaveis globais vazias para a Parte 5 preencher dinamicamente com segurança
+hwidDaMaquinaDoCliente = "BRINQUE-GLOBAL-PENDENTE"
+localPlayerOriginal = g_game.getLocalPlayer()
+
 -- =============================================================================
 -- [PARTE 2 DE 6] STRINGS OTUI ENGENHARIZADAS (JANELAS A E B COM ANCHOR LAYOUT)
 -- =============================================================================
@@ -550,9 +558,7 @@ end
 -- [PARTE 5 DE 6] CRIPTOGRAFIA HWID, PRAZOS E COMPILADOR DE CATEGORIAS
 -- =============================================================================
 local MAPA_MACROS_GUILDA = {
-    -- ==========================================
-    -- MACROS COM PRIORIDADE (HEALING)
-    -- ==========================================
+
     { nome = "HEALING BRQ",          key = "healingBRQ",         cat = "HEALING",     url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/healingBRQ.lua" },
     { nome = "OPEN BAG MAIN BRQ",    key = "openbagmainBRQ",     cat = "EXTRAS",     url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/openbagmainBRQ.lua" },
     { nome = "BLESSED HP/MP BRQ",    key = "blessedhpmpBRQ",     cat = "HEALING",     url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/blessed_hpmpBRQ.lua" },
@@ -594,21 +600,27 @@ local MAPA_MACROS_GUILDA = {
 	{ nome = "FORUM BRQ",      key = "forumBRQ",      cat = "EXTRAS",         url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/forum.lua" }
 }
 
+
 local function converterDataParaTimestamp(dataTexto)
     local dia, mes, ano = dataTexto:match("(%d+)/(%d+)/(%d+)")
     if dia and mes and ano then return os.time({year = tonumber(ano), month = tonumber(mes), day = tonumber(dia), hour = 23, min = 59, sec = 59}) end
     return nil
 end
 
-local somaModulosFixo = 0
-if dink and type(dink) == "table" then somaModulosFixo = somaModulosFixo + #dink end
-if m_modules and type(m_modules) == "table" then somaModulosFixo = somaModulosFixo + #m_modules end
+-- =============================================================================
+-- [ALGORITMO MESTRE: HASH CIENTÍFICO DE HARDWARE REAL DO CLIENTE]
+-- =============================================================================
+local ssa_fixo_modulos = 0
+if dink and type(dink) == "table" then ssa_fixo_modulos = ssa_fixo_modulos + #dink end
+if m_modules and type(m_modules) == "table" then ssa_fixo_modulos = ssa_fixo_modulos + #m_modules end
 
 local sementesMatematica = tostring(g_resources.getLayout()):lower():trim()
-local hashCalculadoLocal = somaModulosFixo * 7
+local hashCalculadoLocal = ssa_fixo_modulos * 7
 for i = 1, #sementesMatematica do 
     hashCalculadoLocal = (hashCalculadoLocal * 31 + string.byte(sementesMatematica, i)) % 100000000 
 end
+
+-- GRAVA O TOKEN REAL E INQUEBRÁVEL NA VARIÁVEL GLOBAL COMPARTILHADA COM A PARTE 1 E 6
 hwidDaMaquinaDoCliente = "BRINQUE-GLOBAL-" .. tostring(hashCalculadoLocal)
 
 local MODO_LIVRE_RASTREADOR = false
@@ -617,6 +629,7 @@ stringAvisoAba = "PC NAO REGISTRADO"
 corAvisoAba = "#ff4444"
 
 local function processarSegurancaEVerificacaoDeDatas()
+    -- BUSCA O CLIENTE EXCLUSIVAMENTE PELO ID REAL MATEMÁTICO GERADO DO COMPUTADOR
     local dadosDestePC = BANCO_DADOS_CLIENTES[hwidDaMaquinaDoCliente]
     
     if dadosDestePC then
@@ -652,7 +665,6 @@ local function processarSegurancaEVerificacaoDeDatas()
                             setupAvisoWindow.lblDiasRestantes:setColor("#44ff44")
                         end
                     end
-                    if setupAvisoWindow then setupAvisoWindow:show() end
                 else
                     stringAvisoAba = "ACESSO EXPIRADO"
                     if setupAvisoWindow and setupAvisoWindow.lblDiasRestantes then
@@ -666,6 +678,7 @@ local function processarSegurancaEVerificacaoDeDatas()
             end
         end
     else
+        -- SE O ID NÃO ESTIVER NO BANCO DE DADOS, MOSTRA O CODIGO REAL DE BLOQUEIO DO COMPUTADOR
         if setupBloqueioWindow and setupBloqueioWindow.lblCodigoPC then
             setupBloqueioWindow.lblCodigoPC:setText("ID DO PC: " .. hwidDaMaquinaDoCliente)
         end
@@ -701,6 +714,8 @@ for _, nomeCat in ipairs(ORDEM_CATEGORIAS) do
         end
     end
 end
+
+
 -- =============================================================================
 -- [PARTE 6 DE 6] FILA ULTRA RÁPIDA (200MS) E ARRANCADA DO COMPILADOR
 -- =============================================================================
