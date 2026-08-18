@@ -27,12 +27,12 @@ local pastaImg = "/bot/CUSTOM_PREMIUM/imagens/"
 -- BANCO DE DADOS DE CLIENTES RIGIDO (Apenas IDs autorizados entram no bot)
 local BANCO_DADOS_CLIENTES = {
     -- Substitua pelo seu ID definitivo "BRINQUE-GLOBAL-XXXXXXXX" que chegar no seu Discord
-    ["BRINQUE-GLOBAL-8405406"] = {
+    ["BRINQUE-GLOBAL-xxxxxxx"] = {
         nome = "Dono Brinque Scripts",
         compra = "01/08/2026",
         vence = "ilimitado"
     },
-    ["BRINQUE-GLOBAL-11111111"] = {
+    ["BRINQUE-GLOBAL-8405406"] = {
         nome = "Patrocinador Oficial",
         compra = "01/08/2026",
         vence = "ilimitado"
