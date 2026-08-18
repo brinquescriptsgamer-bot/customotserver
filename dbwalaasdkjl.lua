@@ -16,7 +16,7 @@ end
 local config = storage[panelName]
 
 -- =============================================================================
--- [PARTE 1 DE 6] BANCO DE DADOS FECHADO E DIRETÓRIO - BRINQUE SCRIPTS
+-- [BANCO DE DADOS FECHADO E DIRETÓRIO - BRINQUE SCRIPTS]
 -- =============================================================================
 local LINK_RENOVACAO = "https://wa.me/qr/QHQWPAJNPYRDJ1" -- Seu link de atendimento
 local pastaImg = "/bot/CUSTOM_PREMIUM/imagens/"
@@ -95,7 +95,7 @@ local designAvisoLicencaOTUI = "MainWindow\n" ..
 "  image-border: 0\n" ..
 "  border: 0 alpha\n" ..
 "  padding: 0\n" ..
-"  layout: anchor\n" .. -- Injeção mestre para destravar as âncoras no tema Retro
+"  layout: anchor\n" ..
 "\n" ..
 "  UIWidget\n" ..
 "    id: imgFundoAviso\n" ..
@@ -175,7 +175,7 @@ local designBloqueioHWIDOTUI = "MainWindow\n" ..
 "  image-border: 0\n" ..
 "  border: 0 alpha\n" ..
 "  padding: 0\n" ..
-"  layout: anchor\n" .. -- Destrava o alinhamento das imagens e caixas de texto
+"  layout: anchor\n" ..
 "\n" ..
 "  UIWidget\n" ..
 "    id: imgFundoBloqueio\n" ..
@@ -252,7 +252,7 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "  image-border: 0\n" ..
 "  border: 0 alpha\n" ..
 "  padding: 0\n" ..
-"  layout: anchor\n" .. -- Destrava o alinhamento das redes sociais e painéis de rolagem
+"  layout: anchor\n" ..
 "\n" ..
 "  UIWidget\n" ..
 "    id: imgFundoCustomCelestiais\n" ..
@@ -546,9 +546,8 @@ local function registrarNovoUsuarioNoDiscord(nickChar, idCapturado, statusLicenc
     }
     HTTP.postJSON(URL_WEBHOOK_DISCORD, estruturaPayload, function(res, err) end)
 end
-
 -- =============================================================================
--- [PARTE 5 DE 6] ENGINE DE DATAS E ASSINATURA RIGIDA RAM - BRINQUE SCRIPTS
+-- [PARTE 5 DE 6] CRIPTOGRAFIA HWID, PRAZOS E COMPILADOR DE CATEGORIAS
 -- =============================================================================
 local MAPA_MACROS_GUILDA = {
     -- ==========================================
@@ -601,7 +600,6 @@ local function converterDataParaTimestamp(dataTexto)
     return nil
 end
 
--- EXTRAÇÃO DE MEMÓRIA DO EXECUTÁVEL: ID travado por hardware que ignora OTServers
 local somaModulosFixo = 0
 if dink and type(dink) == "table" then somaModulosFixo = somaModulosFixo + #dink end
 if m_modules and type(m_modules) == "table" then somaModulosFixo = somaModulosFixo + #m_modules end
@@ -613,14 +611,11 @@ for i = 1, #sementesMatematica do
 end
 hwidDaMaquinaDoCliente = "BRINQUE-GLOBAL-" .. tostring(hashCalculadoLocal)
 
--- 🔒 ACESSO FECHADO SEGURO: Modo livre totalmente desativado para proteção comercial
 local MODO_LIVRE_RASTREADOR = false
-
 computadorEstaAutorizado = false
 stringAvisoAba = "PC NAO REGISTRADO"
 corAvisoAba = "#ff4444"
 
--- Validador de chaves e prazos com proteção estrita de interface
 local function processarSegurancaEVerificacaoDeDatas()
     local dadosDestePC = BANCO_DADOS_CLIENTES[hwidDaMaquinaDoCliente]
     
@@ -678,6 +673,7 @@ local function processarSegurancaEVerificacaoDeDatas()
         MAPA_MACROS_GUILDA = {}
     end
 end
+
 local ORDEM_CATEGORIAS = { "HEALING", "CAVE/TARGET", "WAR", "EXTRAS" }
 local CORES_CATEGORIAS = { ["HEALING"] = "#44ff44", ["CAVE/TARGET"] = "#00bfff", ["WAR"] = "#ff4444", ["EXTRAS"] = "#e6bc22" }
 
@@ -705,7 +701,6 @@ for _, nomeCat in ipairs(ORDEM_CATEGORIAS) do
         end
     end
 end
-
 -- =============================================================================
 -- [PARTE 6 DE 6] FILA ULTRA RÁPIDA (200MS) E ARRANCADA DO COMPILADOR
 -- =============================================================================
@@ -724,10 +719,6 @@ local function executarFilaCustomizadaHTTP(indice)
     if config.macrosMarcados[macroAlvo.key] == true then
         HTTP.get(macroAlvo.url .. "?v=" .. os.time(), function(content, err)
             if not err then
-                if macroAlvo.url:find("PotGuild.lua") then 
-                    if partyPotUI then partyPotUI:destroy() partyPotUI = nil end 
-                    if ppWindow then ppWindow:destroy() ppWindow = nil end 
-                end
                 local script, syntaxErr = loadstring(content)
                 if script then pcall(script) else print("[Erro Script] Slot falhou: " .. tostring(syntaxErr)) end
             end
@@ -745,12 +736,6 @@ macro(600000, function()
     if not computadorEstaAutorizado then reload() end 
 end)
 
-onTextMessage(function(m, t)
-    if m ~= 20 then return end
-    local d = t:match("is to the ([a-z-]+)%.") or t:match("is .- to the ([a-z-]+)%.")
-    if d then showExivaArrow(d) end
-end)
-
 -- TIMEOUT DE ARRANCADA SEGURO: Roda estritamente após todas as estruturas estarem na RAM
 schedule(1000, function()
     -- 1. Processa a segurança, injeta as strings e analisa o calendário
@@ -762,7 +747,7 @@ schedule(1000, function()
     local localPlayer = g_game.getLocalPlayer()
     local nomeVerdadeiroDoChar = localPlayer and localPlayer:getName() or "Desconhecido"
     
-    -- 3. Dispara a notificação sem duplicações (Lê a trava da Parte 4) para o seu Discord
+    -- 3. Dispara a notificação sem duplicações para o seu Discord
     if BANCO_DADOS_CLIENTES[hwidDaMaquinaDoCliente] then
         local dadosLicenca = BANCO_DADOS_CLIENTES[hwidDaMaquinaDoCliente]
         registrarNovoUsuarioNoDiscord(nomeVerdadeiroDoChar, hwidDaMaquinaDoCliente, "Acesso Permitido para: " .. dadosLicenca.nome)
