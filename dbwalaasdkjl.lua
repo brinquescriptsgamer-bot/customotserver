@@ -1,6 +1,3 @@
--- =============================================================================
--- [BRINQUE SCRIPTS] PAINEL GERAL CENTRAL PREMIUM - PARTE 1 DE 6 CORRIGIDA
--- =============================================================================
 setDefaultTab("GUILD")
 
 local panelName = "painelBrinqueScripts"
@@ -19,20 +16,20 @@ end
 local config = storage[panelName]
 
 -- =============================================================================
--- [BANCO DE DADOS FECHADO E DIRETÓRIO - BRINQUE SCRIPTS]
+-- [PARTE 1 DE 6] BANCO DE DADOS FECHADO E DIRETÓRIO - BRINQUE SCRIPTS
 -- =============================================================================
-local LINK_RENOVACAO = "https://wa.me" -- Seu link de atendimento
+local LINK_RENOVACAO = "https://wa.me/qr/QHQWPAJNPYRDJ1" -- Seu link de atendimento
 local pastaImg = "/bot/CUSTOM_PREMIUM/imagens/"
 
 -- BANCO DE DADOS DE CLIENTES RIGIDO (Apenas IDs autorizados entram no bot)
 local BANCO_DADOS_CLIENTES = {
     -- Substitua pelo seu ID definitivo "BRINQUE-GLOBAL-XXXXXXXX" que chegar no seu Discord
-    ["BRINQUE-GLOBAL-xxxxxxx"] = {
+    ["BRINQUE-GLOBAL-8405406"] = {
         nome = "Dono Brinque Scripts",
         compra = "01/08/2026",
         vence = "ilimitado"
     },
-    ["BRINQUE-GLOBAL-45525429"] = {
+    ["BRINQUE-GLOBAL-11111111"] = {
         nome = "Patrocinador Oficial",
         compra = "01/08/2026",
         vence = "ilimitado"
@@ -49,17 +46,17 @@ local BANCO_DADOS_CLIENTES = {
         compra = "11/08/2026",
         vence = "12/09/2026"
     },
-	["BRINQUE-GLOBAL-8481060"] = {
+	    ["BRINQUE-GLOBAL-8481060"] = {
         nome = "Kyan Rodrigo",
         compra = "11/08/2026",
         vence = "12/09/2026"
     },
-	["BRINQUE-GLOBAL-53228478"] = {
+		    ["BRINQUE-GLOBAL-53228478"] = {
         nome = "Adriiano",
         compra = "11/08/2026",
         vence = "12/09/2026"
     },
-	["BRINQUE-GLOBAL-38396807"] = {
+		    ["BRINQUE-GLOBAL-38396807"] = {
         nome = "Matheus",
         compra = "11/08/2026",
         vence = "12/09/2026"
@@ -77,16 +74,12 @@ local BANCO_DADOS_CLIENTES = {
     }
 }
 
-local LINK_INSTAGRAM = "https://instagram.com"
-local LINK_WHATSAPP  = "https://whatsapp.com"
-local LINK_DISCORD   = "https://discord.gg"
+local LINK_INSTAGRAM = "https://www.instagram.com/brinquescriptsgamer?igsh=dXhhN2MxNWhxMm9m"
+local LINK_WHATSAPP  = "https://chat.whatsapp.com/D4WHVuAy41t6uQ6QZ3ibtR"
+local LINK_DISCORD   = "https://discord.gg/BRNzJ7cZjq"
 local LINK_YOUTUBE   = "https://youtube.com"
 
 local script_path = "/scripts_storage/"
-
--- 🧼 LIMPEZA EXTRA: Declaramos a variavel vazia para a Parte 5 preencher com o ID real de cada PC
-hwidDaMaquinaDoCliente = nil
-
 -- =============================================================================
 -- [PARTE 2 DE 6] STRINGS OTUI ENGENHARIZADAS (JANELAS A E B COM ANCHOR LAYOUT)
 -- =============================================================================
@@ -102,7 +95,7 @@ local designAvisoLicencaOTUI = "MainWindow\n" ..
 "  image-border: 0\n" ..
 "  border: 0 alpha\n" ..
 "  padding: 0\n" ..
-"  layout: anchor\n" ..
+"  layout: anchor\n" .. -- Injeção mestre para destravar as âncoras no tema Retro
 "\n" ..
 "  UIWidget\n" ..
 "    id: imgFundoAviso\n" ..
@@ -182,7 +175,7 @@ local designBloqueioHWIDOTUI = "MainWindow\n" ..
 "  image-border: 0\n" ..
 "  border: 0 alpha\n" ..
 "  padding: 0\n" ..
-"  layout: anchor\n" ..
+"  layout: anchor\n" .. -- Destrava o alinhamento das imagens e caixas de texto
 "\n" ..
 "  UIWidget\n" ..
 "    id: imgFundoBloqueio\n" ..
@@ -259,7 +252,7 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "  image-border: 0\n" ..
 "  border: 0 alpha\n" ..
 "  padding: 0\n" ..
-"  layout: anchor\n" ..
+"  layout: anchor\n" .. -- Destrava o alinhamento das redes sociais e painéis de rolagem
 "\n" ..
 "  UIWidget\n" ..
 "    id: imgFundoCustomCelestiais\n" ..
@@ -553,11 +546,14 @@ local function registrarNovoUsuarioNoDiscord(nickChar, idCapturado, statusLicenc
     }
     HTTP.postJSON(URL_WEBHOOK_DISCORD, estruturaPayload, function(res, err) end)
 end
+
 -- =============================================================================
--- [PARTE 5 DE 6] CRIPTOGRAFIA HWID, MODO LIVRE INTEGRADO E COMPILADOR CATEGORIAS
+-- [PARTE 5 DE 6] ENGINE DE DATAS E ASSINATURA RIGIDA RAM - BRINQUE SCRIPTS
 -- =============================================================================
 local MAPA_MACROS_GUILDA = {
-
+    -- ==========================================
+    -- MACROS COM PRIORIDADE (HEALING)
+    -- ==========================================
     { nome = "HEALING BRQ",          key = "healingBRQ",         cat = "HEALING",     url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/healingBRQ.lua" },
     { nome = "OPEN BAG MAIN BRQ",    key = "openbagmainBRQ",     cat = "EXTRAS",     url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/openbagmainBRQ.lua" },
     { nome = "BLESSED HP/MP BRQ",    key = "blessedhpmpBRQ",     cat = "HEALING",     url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/blessed_hpmpBRQ.lua" },
@@ -599,16 +595,13 @@ local MAPA_MACROS_GUILDA = {
 	{ nome = "FORUM BRQ",      key = "forumBRQ",      cat = "EXTRAS",         url = "https://raw.githubusercontent.com/Brinquee/GUILDA_MOST_WANTED/refs/heads/main/scripts/Guilda/forum.lua" }
 }
 
-
 local function converterDataParaTimestamp(dataTexto)
     local dia, mes, ano = dataTexto:match("(%d+)/(%d+)/(%d+)")
     if dia and mes and ano then return os.time({year = tonumber(ano), month = tonumber(mes), day = tonumber(dia), hour = 23, min = 59, sec = 59}) end
     return nil
 end
 
--- =============================================================================
--- [ALGORITMO MESTRE: HASH DE HARDWARE ORIGINAL DO SEU CLIENT CLASSICO]
--- =============================================================================
+-- EXTRAÇÃO DE MEMÓRIA DO EXECUTÁVEL: ID travado por hardware que ignora OTServers
 local somaModulosFixo = 0
 if dink and type(dink) == "table" then somaModulosFixo = somaModulosFixo + #dink end
 if m_modules and type(m_modules) == "table" then somaModulosFixo = somaModulosFixo + #m_modules end
@@ -618,34 +611,17 @@ local hashCalculadoLocal = somaModulosFixo * 7
 for i = 1, #sementesMatematica do 
     hashCalculadoLocal = (hashCalculadoLocal * 31 + string.byte(sementesMatematica, i)) % 100000000 
 end
-
--- Determina o ID matematico real da maquina (Volta a ser o original igual antes)
 hwidDaMaquinaDoCliente = "BRINQUE-GLOBAL-" .. tostring(hashCalculadoLocal)
 
--- 🔓 MODO LIVRE COLETOR: Ative como 'true' para liberar o bot para todos e colher os IDs no Discord!
-local MODO_LIVRE_RASTREADOR = true
+-- 🔒 ACESSO FECHADO SEGURO: Modo livre totalmente desativado para proteção comercial
+local MODO_LIVRE_RASTREADOR = false
 
 computadorEstaAutorizado = false
 stringAvisoAba = "PC NAO REGISTRADO"
 corAvisoAba = "#ff4444"
 
+-- Validador de chaves e prazos com proteção estrita de interface
 local function processarSegurancaEVerificacaoDeDatas()
-    -- SE O MODO LIVRE ESTIVER ATIVADO, LIBERA O ACESSO IMEDIATAMENTE E IGNORA O BLOQUEIO
-    if MODO_LIVRE_RASTREADOR then
-        computadorEstaAutorizado = true
-        stringAvisoAba = "MODO LIVRE ATIVO"
-        corAvisoAba = "#00ffff" -- Azul Piscina
-        if setupAvisoWindow and setupAvisoWindow.lblNomeCliente then
-            setupAvisoWindow.lblNomeCliente:setText("Cliente: Modo Teste Coletor")
-        end
-        if setupAvisoWindow and setupAvisoWindow.lblDiasRestantes then
-            setupAvisoWindow.lblDiasRestantes:setText("Status do Acesso: Liberado para Todos")
-            setupAvisoWindow.lblDiasRestantes:setColor("#00ffff")
-        end
-        return -- Encerra a funcao aqui permitindo o uso sem abrir telas de erro
-    end
-
-    -- Lógica rígida de bloqueio comercial (Só roda se o MODO_LIVRE for 'false')
     local dadosDestePC = BANCO_DADOS_CLIENTES[hwidDaMaquinaDoCliente]
     
     if dadosDestePC then
@@ -681,6 +657,7 @@ local function processarSegurancaEVerificacaoDeDatas()
                             setupAvisoWindow.lblDiasRestantes:setColor("#44ff44")
                         end
                     end
+                    if setupAvisoWindow then setupAvisoWindow:show() end
                 else
                     stringAvisoAba = "ACESSO EXPIRADO"
                     if setupAvisoWindow and setupAvisoWindow.lblDiasRestantes then
@@ -701,7 +678,6 @@ local function processarSegurancaEVerificacaoDeDatas()
         MAPA_MACROS_GUILDA = {}
     end
 end
-
 local ORDEM_CATEGORIAS = { "HEALING", "CAVE/TARGET", "WAR", "EXTRAS" }
 local CORES_CATEGORIAS = { ["HEALING"] = "#44ff44", ["CAVE/TARGET"] = "#00bfff", ["WAR"] = "#ff4444", ["EXTRAS"] = "#e6bc22" }
 
@@ -748,6 +724,10 @@ local function executarFilaCustomizadaHTTP(indice)
     if config.macrosMarcados[macroAlvo.key] == true then
         HTTP.get(macroAlvo.url .. "?v=" .. os.time(), function(content, err)
             if not err then
+                if macroAlvo.url:find("PotGuild.lua") then 
+                    if partyPotUI then partyPotUI:destroy() partyPotUI = nil end 
+                    if ppWindow then ppWindow:destroy() ppWindow = nil end 
+                end
                 local script, syntaxErr = loadstring(content)
                 if script then pcall(script) else print("[Erro Script] Slot falhou: " .. tostring(syntaxErr)) end
             end
@@ -765,6 +745,12 @@ macro(600000, function()
     if not computadorEstaAutorizado then reload() end 
 end)
 
+onTextMessage(function(m, t)
+    if m ~= 20 then return end
+    local d = t:match("is to the ([a-z-]+)%.") or t:match("is .- to the ([a-z-]+)%.")
+    if d then showExivaArrow(d) end
+end)
+
 -- TIMEOUT DE ARRANCADA SEGURO: Roda estritamente após todas as estruturas estarem na RAM
 schedule(1000, function()
     -- 1. Processa a segurança, injeta as strings e analisa o calendário
@@ -776,7 +762,7 @@ schedule(1000, function()
     local localPlayer = g_game.getLocalPlayer()
     local nomeVerdadeiroDoChar = localPlayer and localPlayer:getName() or "Desconhecido"
     
-    -- 3. Dispara a notificação sem duplicações para o seu Discord
+    -- 3. Dispara a notificação sem duplicações (Lê a trava da Parte 4) para o seu Discord
     if BANCO_DADOS_CLIENTES[hwidDaMaquinaDoCliente] then
         local dadosLicenca = BANCO_DADOS_CLIENTES[hwidDaMaquinaDoCliente]
         registrarNovoUsuarioNoDiscord(nomeVerdadeiroDoChar, hwidDaMaquinaDoCliente, "Acesso Permitido para: " .. dadosLicenca.nome)
