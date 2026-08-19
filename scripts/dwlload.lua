@@ -35,103 +35,280 @@ local SCRIPTS_DO_REPOSITORIO = {
 
 local MAPA_MACROS_GUILDA = SCRIPTS_DO_REPOSITORIO[servidorAtivoNoMomento] or {}
 -- =============================================================================
--- [NUVEM] ARQUIVO 2: CARREGADOR MESTRE COM SISTEMA DE ABAS - PARTE 2 DE 3
+-- [PAINEL CENTRAL - PARTE 2 DE 4] STRINGS OTUI COM DUAS JANELAS RECALIBRADAS
 -- =============================================================================
-
 local widgetRaizDoJogo = g_ui.getRootWidget()
-local painelDeMacrosJanelaB = widgetRaizDoJogo:recursiveGetChildById("janelaBotoesMacrosRemotos")
 
--- Registra uma variável na memória global para lembrar qual aba o player abriu por último
-if _G.brinqueAbaMacrosAtiva == nil then _G.brinqueAbaMacrosAtiva = "HEALING" end
+-- JANELA A: SELEÇÃO DE SERVIDORES E STATUS DA CONTA
+local designPrincipalOTUI = "MainWindow\n" ..
+"  id: janelaEscolhaMacros\n" ..
+"  size: 560 300\n" ..
+"  @onEscape: self:hide()\n" ..
+"  background-color: alpha\n" ..
+"  image-border: 0\n" ..
+"  border: 0 alpha\n" ..
+"  padding: 0\n" ..
+"  layout: anchor\n" ..
+"\n" ..
+"  UIWidget\n" ..
+"    id: imgFundoCustomCelestiais\n" ..
+"    image-source: /bot/BRINQUE/imagens/minimalistum.png\n" ..
+"    image-smooth: true\n" ..
+"    image-fixed-ratio: false\n" ..
+"    anchors.fill: parent\n" ..
+"    margin: -5\n" ..
+"    phantom: true\n" ..
+"\n" ..
+"  Panel\n" ..
+"    background-color: #00000055\n" ..
+"    anchors.fill: parent\n" ..
+"    margin: -5\n" ..
+"    phantom: true\n" ..
+"\n" ..
+"  Label\n" ..
+"    id: lblServidoresTitulo\n" ..
+"    text: -- SELECIONE O SEU SERVIDOR --\n" ..
+"    font: verdana-11px-rounded\n" ..
+"    color: #00bfff\n" ..
+"    anchors.top: parent.top\n" ..
+"    anchors.left: parent.left\n" ..
+"    anchors.right: parent.horizontalCenter\n" ..
+"    margin-top: 20\n" ..
+"    margin-left: 15\n" ..
+"    text-align: center\n" ..
+"\n" ..
+"  ComboBox\n" ..
+"    id: comboServidores\n" ..
+"    anchors.top: lblServidoresTitulo.bottom\n" ..
+"    anchors.left: parent.left\n" ..
+"    anchors.right: parent.horizontalCenter\n" ..
+"    margin-top: 15\n" ..
+"    margin-left: 25\n" ..
+"    margin-right: 25\n" ..
+"    height: 22\n" ..
+"\n" ..
+"  CheckBox\n" ..
+"    id: chkSalvarFixo\n" ..
+"    text: Entrar automaticamente neste servidor\n" ..
+"    font: verdana-11px-rounded\n" ..
+"    color: #44ff44\n" ..
+"    anchors.top: comboServidores.bottom\n" ..
+"    anchors.left: parent.left\n" ..
+"    anchors.right: parent.horizontalCenter\n" ..
+"    margin-top: 12\n" ..
+"    margin-left: 25\n" ..
+"    height: 16\n" ..
+"\n" ..
+"  Button\n" ..
+"    id: btnConfirmarEntrada\n" ..
+"    text: ABRIR SCRIPTS DO OT\n" ..
+"    color: #44ff44\n" ..
+"    font: verdana-11px-rounded\n" ..
+"    anchors.top: chkSalvarFixo.bottom\n" ..
+"    anchors.left: parent.left\n" ..
+"    anchors.right: parent.horizontalCenter\n" ..
+"    margin-top: 15\n" ..
+"    margin-left: 25\n" ..
+"    margin-right: 25\n" ..
+"    height: 24\n" ..
+"\n" ..
+"  Label\n" ..
+"    id: lblRedesTitulo\n" ..
+"    text: -- BRINQUE SCRIPTS --\n" ..
+"    font: verdana-11px-rounded\n" ..
+"    color: #FFD700\n" ..
+"    anchors.top: parent.top\n" ..
+"    anchors.left: parent.horizontalCenter\n" ..
+"    anchors.right: parent.right\n" ..
+"    margin-top: 20\n" ..
+"    margin-left: 15\n" ..
+"    text-align: center\n" ..
+"\n" ..
+"  UIWidget\n" ..
+"    id: imgFundoInsta\n" ..
+"    image-source: /bot/BRINQUE/imagens/BOTAO.png\n" ..
+"    image-smooth: true\n" ..
+"    image-fixed-ratio: false\n" ..
+"    anchors.top: lblRedesTitulo.bottom\n" ..
+"    anchors.left: parent.horizontalCenter\n" ..
+"    anchors.right: parent.right\n" ..
+"    margin-top: 15\n" ..
+"    margin-left: 20\n" ..
+"    margin-right: 15\n" ..
+"    height: 24\n" ..
+"    phantom: true\n" ..
+"  Label\n" ..
+"    id: btnInstagram\n" ..
+"    text: Acessar Instagram\n" ..
+"    font: verdana-11px-rounded\n" ..
+"    color: #ffffff\n" ..
+"    text-auto-resize: false\n" ..
+"    text-align: center\n" ..
+"    margin-top: 4\n" ..
+"    phantom: false\n" ..
+"    anchors.fill: imgFundoInsta\n" ..
+"\n" ..
+"  UIWidget\n" ..
+"    id: imgFundoWhats\n" ..
+"    image-source: /bot/BRINQUE/imagens/BOTAO.png\n" ..
+"    image-smooth: true\n" ..
+"    image-fixed-ratio: false\n" ..
+"    anchors.top: imgFundoInsta.bottom\n" ..
+"    anchors.left: parent.horizontalCenter\n" ..
+"    anchors.right: parent.right\n" ..
+"    margin-top: 10\n" ..
+"    margin-left: 20\n" ..
+"    margin-right: 15\n" ..
+"    height: 24\n" ..
+"    phantom: true\n" ..
+"  Label\n" ..
+"    id: btnWhatsApp\n" ..
+"    text: Grupo do WhatsApp\n" ..
+"    font: verdana-11px-rounded\n" ..
+"    color: #ffffff\n" ..
+"    text-auto-resize: false\n" ..
+"    text-align: center\n" ..
+"    margin-top: 4\n" ..
+"    phantom: false\n" ..
+"    anchors.fill: imgFundoWhats\n" ..
+"\n" ..
+"  Label\n" ..
+"    id: lblLicencaInfo\n" ..
+"    text: Licenca: Carregando dados...\n" ..
+"    font: verdana-11px-rounded\n" ..
+"    color: #44ff44\n" ..
+"    anchors.top: btnConfirmarEntrada.bottom\n" ..
+"    anchors.left: parent.left\n" ..
+"    anchors.right: parent.horizontalCenter\n" ..
+"    margin-top: 12\n" ..
+"    text-align: center\n" ..
+"\n" ..
+"  Label\n" ..
+"    id: lblIDInfo\n" ..
+"    text: ID DO PC ATUAL: ...\n" ..
+"    font: verdana-11px-rounded\n" ..
+"    color: #FFD700\n" ..
+"    anchors.top: lblLicencaInfo.bottom\n" ..
+"    anchors.left: parent.left\n" ..
+"    anchors.right: parent.horizontalCenter\n" ..
+"    margin-top: 6\n" ..
+"    text-align: center\n" ..
+"\n" ..
+"  HorizontalSeparator\n" ..
+"    id: sepInf\n" ..
+"    anchors.left: parent.left\n" ..
+"    anchors.right: parent.right\n" ..
+"    anchors.bottom: closeBtn.top\n" ..
+"    margin-bottom: 8\n" ..
+"\n" ..
+"  Button\n" ..
+"    id: closeBtn\n" ..
+"    text: Fechar\n" ..
+"    font: cipsoftFont\n" ..
+"    anchors.right: parent.right\n" ..
+"    anchors.bottom: parent.bottom\n" ..
+"    size: 60 20\n" ..
+"    margin-bottom: 5\n" ..
+"    margin-right: 15\n" ..
+"    @onClick: self:getParent():hide()\n"
 
--- Função interna que limpa a tela e desenha as CheckBoxes estritamente da aba clicada
-local function renderizarConteudoDaAbaSelecionada(nomeDaAba)
-    _G.brinqueAbaMacrosAtiva = nomeDaAba
-    
-    if not painelDeMacrosJanelaB or not painelDeMacrosJanelaB.listaScroll then return end
-    
-    -- Limpa todos os macros antigos da visualização
-    painelDeMacrosJanelaB.listaScroll:destroyChildren()
+-- JANELA B: CALIBRADA E EXPANDIDA PARA ENCAIXAR AS ABAS SUPERIORES PERFEITAMENTE
+local designMacrosOTUI = "MainWindow\n" ..
+"  id: janelaBotoesMacrosRemotos\n" ..
+"  size: 340 460\n" ..
+"  text: Macros Ativos - Brinque\n" ..
+"  @onEscape: self:hide()\n" ..
+"  background-color: alpha\n" ..
+"  image-border: 0\n" ..
+"  border: 0 alpha\n" ..
+"  padding: 0\n" ..
+"  layout: anchor\n" ..
+"\n" ..
+"  UIWidget\n" ..
+"    id: imgFundoMacros\n" ..
+"    image-source: /bot/BRINQUE/imagens/minimalistum.png\n" ..
+"    image-smooth: true\n" ..
+"    image-fixed-ratio: false\n" ..
+"    anchors.fill: parent\n" ..
+"    margin: -5\n" ..
+"    phantom: true\n" ..
+"\n" ..
+"  Panel\n" ..
+"    background-color: #00000065\n" ..
+"    anchors.fill: parent\n" ..
+"    margin: -5\n" ..
+"    phantom: true\n" ..
+"\n" ..
+"  ScrollablePanel\n" ..
+"    id: listaScroll\n" ..
+"    anchors.top: parent.top\n" ..
+"    anchors.left: parent.left\n" ..
+"    anchors.right: barraRolagem.left\n" ..
+"    anchors.bottom: closeBtnMacros.top\n" ..
+"    margin-top: 65\n" ..
+"    margin-left: 20\n" ..
+"    margin-right: 2\n" ..
+"    margin-bottom: 15\n" ..
+"    vertical-scrollbar: barraRolagem\n" ..
+"    layout:\n" ..
+"      type: verticalBox\n" ..
+"      spacing: 6\n" ..
+"\n" ..
+"  VerticalScrollBar\n" ..
+"    id: barraRolagem\n" ..
+"    anchors.top: parent.top\n" ..
+"    anchors.bottom: closeBtnMacros.top\n" ..
+"    anchors.right: parent.right\n" ..
+"    margin-top: 65\n" ..
+"    margin-bottom: 15\n" ..
+"    margin-right: 12\n" ..
+"    step: 20\n" ..
+"    pixels-scroll: true\n" ..
+"\n" ..
+"  Button\n" ..
+"    id: closeBtnMacros\n" ..
+"    text: Ocultar\n" ..
+"    font: cipsoftFont\n" ..
+"    anchors.right: parent.right\n" ..
+"    anchors.bottom: parent.bottom\n" ..
+"    size: 60 20\n" ..
+"    margin-bottom: 10\n" ..
+"    margin-right: 20\n" ..
+"    @onClick: self:getParent():hide()\n"
 
-    -- Cria o título da categoria destacada no topo da lista
-    local CORES_ABAS = { ["HEALING"] = "#44ff44", ["CAVEBOT"] = "#00bfff", ["WAR"] = "#ff4444", ["EXTRAS"] = "#e6bc22" }
-    local div = g_ui.createWidget("Label", painelDeMacrosJanelaB.listaScroll)
-    div:setText("-- " .. nomeDaAba .. " ANEXADOS --")
-    div:setFont("verdana-11px-rounded")
-    div:setColor(CORES_ABAS[nomeDaAba] or "#ffffff")
-    div:setMarginTop(2)
-    div:setMarginBottom(8)
+if widgetRaizDoJogo:recursiveGetChildById("janelaEscolhaMacros") then widgetRaizDoJogo:recursiveGetChildById("janelaEscolhaMacros"):destroy() end
+if widgetRaizDoJogo:recursiveGetChildById("janelaBotoesMacrosRemotos") then widgetRaizDoJogo:recursiveGetChildById("janelaBotoesMacrosRemotos"):destroy() end
 
-    -- Injeta estritamente as CheckBoxes que pertencem a esta aba clicada
-    for _, item in ipairs(MAPA_MACROS_GUILDA) do
-        if item.cat == nomeDaAba then
-            if configMestre.macrosMarcados[item.key] == nil then 
-                configMestre.macrosMarcados[item.key] = true 
-            end
+local setupMacrosWindow = setupUI(designPrincipalOTUI, widgetRaizDoJogo)
+setupJanelaBotoesMacros = setupUI(designMacrosOTUI, widgetRaizDoJogo)
 
-            local box = g_ui.createWidget("CheckBox", painelDeMacrosJanelaB.listaScroll)
-            box:setText(item.nome)
-            box:setFont("verdana-11px-rounded")
-            box:setHeight(16)
-            box:setChecked(configMestre.macrosMarcados[item.key] == true)
-            
-            box.onClick = function(w)
-                local val = not w:isChecked()
-                w:setChecked(val)
-                configMestre.macrosMarcados[item.key] = val
-            end
-        end
+setupMacrosWindow:hide()
+setupJanelaBotoesMacros:hide()
+
+if setupMacrosWindow and setupMacrosWindow.lblIDInfo then
+    setupMacrosWindow.lblIDInfo:setText("ID DO PC ATUAL: " .. tostring(hwidDaMaquinaDoCliente))
+end
+
+local function abrirLinkNoNavegadorReal(urlDestino)
+    if g_signals and g_signals.openUrl then g_signals.openUrl(urlDestino)
+    elseif g_platform and g_platform.openUrl then g_platform.openUrl(urlDestino)
+    else print(">>> [BRINQUE] Link: " .. urlDestino) end
+end
+
+setupMacrosWindow.btnInstagram.onClick = function() abrirLinkNoNavegadorReal(LINK_INSTAGRAM) end
+setupMacrosWindow.btnWhatsApp.onClick  = function() abrirLinkNoNavegadorReal(LINK_WHATSAPP) end
+
+local mapeamentoBotoesImagens = {
+    { widget = setupMacrosWindow.imgFundoInsta,   file = "BOTAO.png" },
+    { widget = setupMacrosWindow.imgFundoWhats,   file = "BOTAO.png" }
+}
+for _, itemBtn in ipairs(mapeamentoBotoesImagens) do
+    if not g_resources.fileExists(pastaImg .. itemBtn.file) then
+        itemBtn.widget:setImageSource("")
+        itemBtn.widget:setBackgroundColor("#2f2f2f")
     end
 end
 
--- CONSTRUTOR DO MENU DE ABAS SUPERIORES (IGUAL AS ABAS NATIVAS DO BOT)
-if painelDeMacrosJanelaB then
-    -- Se já existia um painel antigo de abas criado, destrói para não duplicar botões
-    if painelDeMacrosJanelaB.gradeAbasBotoes then painelDeMacrosJanelaB.gradeAbasBotoes:destroy() end
-
-    -- Cria o contêiner horizontal fixado no topo absoluto da Janela B
-    local gradeAbas = g_ui.createWidget("Panel", painelDeMacrosJanelaB)
-    gradeAbas:setId("gradeAbasBotoes")
-    gradeAbas:setHeight(22)
-    gradeAbas:addAnchor(AnchorTop, "parent", AnchorTop)
-    gradeAbas:addAnchor(AnchorLeft, "parent", AnchorLeft)
-    gradeAbas:addAnchor(AnchorRight, "parent", AnchorRight)
-    gradeAbas:setMarginTop(30)
-    gradeAbas:setMarginLeft(15)
-    gradeAbas:setMarginRight(15)
-    
-    local layoutGrade = g_ui.createLayout("HorizontalLayout", gradeAbas)
-    layoutGrade:setSpacing(4)
-
-    -- Move a lista de rolagem original para ficar logo abaixo desse novo menu de abas
-    if painelDeMacrosJanelaB.listaScroll then
-        painelDeMacrosJanelaB.listaScroll:removeAnchor(AnchorTop)
-        painelDeMacrosJanelaB.listaScroll:addAnchor(AnchorTop, "gradeAbasBotoes", AnchorBottom)
-        painelDeMacrosJanelaB.listaScroll:setMarginTop(8)
-    end
-    if painelDeMacrosJanelaB.barraRolagem then
-        painelDeMacrosJanelaB.barraRolagem:removeAnchor(AnchorTop)
-        painelDeMacrosJanelaB.barraRolagem:addAnchor(AnchorTop, "gradeAbasBotoes", AnchorBottom)
-        painelDeMacrosJanelaB.barraRolagem:setMarginTop(8)
-    end
-
-    -- Cria e injeta os 4 botões de abas profissionais no menu superior
-    local CHAVES_BOTOES_ABAS = { "HEALING", "CAVEBOT", "WAR", "EXTRAS" }
-    for _, textoAba in ipairs(CHAVES_BOTOES_ABAS) do
-        local btnAba = g_ui.createWidget("Button", gradeAbas)
-        btnAba:setText(textoAba)
-        btnAba:setFont("verdana-9px-rounded")
-        btnAba:setHeight(18)
-        
-        -- Evento de clique dispara a troca de tela em tempo real
-        btnAba.onClick = function()
-            renderizarConteudoDaAbaSelecionada(textoAba)
-        end
-    end
-
-    -- Força a inicialização exibindo a aba padrão pré-selecionada na memória
-    renderizarConteudoDaAbaSelecionada(_G.brinqueAbaMacrosAtiva)
-end
 -- =============================================================================
 -- [NUVEM] ARQUIVO 2: CARREGADOR MESTRE COM SISTEMA DE ABAS - PARTE 3 DE 3
 -- =============================================================================
