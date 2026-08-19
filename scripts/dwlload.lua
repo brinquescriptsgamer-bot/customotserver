@@ -52,7 +52,7 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "\n" ..
 "  UIWidget\n" ..
 "    id: imgFundoCustomCelestiais\n" ..
-"    image-source: /bot/BRINQUE/imagens/minimalistum.png\n" ..
+"    image-source: /bot/Vs3_CUSTOM_PREMIUM/imagens/logobrinque.png\n" ..
 "    image-smooth: true\n" ..
 "    image-fixed-ratio: false\n" ..
 "    anchors.fill: parent\n" ..
@@ -126,7 +126,7 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "\n" ..
 "  UIWidget\n" ..
 "    id: imgFundoInsta\n" ..
-"    image-source: /bot/BRINQUE/imagens/BOTAO.png\n" ..
+"    image-source: /bot/Vs3_CUSTOM_PREMIUM/imagens/botao_dourado.png\n" ..
 "    image-smooth: true\n" ..
 "    image-fixed-ratio: false\n" ..
 "    anchors.top: lblRedesTitulo.bottom\n" ..
@@ -150,7 +150,7 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "\n" ..
 "  UIWidget\n" ..
 "    id: imgFundoWhats\n" ..
-"    image-source: /bot/BRINQUE/imagens/BOTAO.png\n" ..
+"    image-source: /bot/Vs3_CUSTOM_PREMIUM/imagens/botao_dourado.png\n" ..
 "    image-smooth: true\n" ..
 "    image-fixed-ratio: false\n" ..
 "    anchors.top: imgFundoInsta.bottom\n" ..
@@ -226,7 +226,7 @@ local designMacrosOTUI = "MainWindow\n" ..
 "\n" ..
 "  UIWidget\n" ..
 "    id: imgFundoMacros\n" ..
-"    image-source: /bot/BRINQUE/imagens/minimalistum.png\n" ..
+"    image-source: /bot/Vs3_CUSTOM_PREMIUM/imagens/llogobrinque.png\n" ..
 "    image-smooth: true\n" ..
 "    image-fixed-ratio: false\n" ..
 "    anchors.fill: parent\n" ..
@@ -299,8 +299,8 @@ setupMacrosWindow.btnInstagram.onClick = function() abrirLinkNoNavegadorReal(LIN
 setupMacrosWindow.btnWhatsApp.onClick  = function() abrirLinkNoNavegadorReal(LINK_WHATSAPP) end
 
 local mapeamentoBotoesImagens = {
-    { widget = setupMacrosWindow.imgFundoInsta,   file = "BOTAO.png" },
-    { widget = setupMacrosWindow.imgFundoWhats,   file = "BOTAO.png" }
+    { widget = setupMacrosWindow.imgFundoInsta,   file = "botao_dourado.png" },
+    { widget = setupMacrosWindow.imgFundoWhats,   file = "botao_dourado.png" }
 }
 for _, itemBtn in ipairs(mapeamentoBotoesImagens) do
     if not g_resources.fileExists(pastaImg .. itemBtn.file) then
