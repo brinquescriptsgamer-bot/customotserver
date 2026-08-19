@@ -18,7 +18,7 @@ local SCRIPTS_DO_REPOSITORIO = {
 	-- ==========================================
 	-- MACROS COM PRIORIDADE UM (HEALING)
 	-- ==========================================
-        { nome = "HEALING BRQ ILUSION",    key = "healingBRQ",    cat = "HEALING",     url = URL_BASE_REPOSITORIO .. "sv_ilusion/healing/healingBRQ.lua" },
+    { nome = "HEALING BRQ ILUSION",    key = "healingBRQ",    cat = "HEALING",     url = URL_BASE_REPOSITORIO .. "sv_ilusion/healing/healingBRQ.lua" },
 		
 		
 	-- ==========================================
@@ -30,13 +30,13 @@ local SCRIPTS_DO_REPOSITORIO = {
 	-- ==========================================
 	-- MACROS SEM PRIORIDADE (CAVE/TARGET)
     -- ==========================================
-        { nome = "MAGIAS S/PK BRQ ILUSION", key = "magiasempkBRQ", cat = "cave_target",         url = URL_BASE_REPOSITORIO .. "sv_ilusion/cave_target/magiasempkBRQ.lua" },
+     { nome = "MAGIAS S/PK BRQ ILUSION", key = "magiasempkBRQ", cat = "cave_target",         url = URL_BASE_REPOSITORIO .. "sv_ilusion/cave_target/magiasempkBRQ.lua" }
 
 
     -- ==========================================
     -- MACROS EXTRAS (EXTRAS)
     -- ==========================================
-		{ nome = "MAGIAS S/PK BRQ ILUSION", key = "magiasempkBRQ", cat = "EXTRAS",         url = URL_BASE_REPOSITORIO .. "sv_ilusion/EXTRAS/magiasempkBRQ.lua" }
+	{ nome = "MAGIAS S/PK BRQ ILUSION", key = "magiasempkBRQ", cat = "EXTRAS",         url = URL_BASE_REPOSITORIO .. "sv_ilusion/EXTRAS/magiasempkBRQ.lua" }
 	
     },
     ["Minimalist"] = {
