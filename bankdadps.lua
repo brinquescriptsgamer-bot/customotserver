@@ -5,7 +5,7 @@
 -- 🔒 BANCO DE DADOS CENTRALIZADO (ATUALIZE SEUS CLIENTES APENAS AQUI)
 BANCO_DADOS_CLIENTES = {
     ["Dono Brinque"] = {
-        vence = "01/10/2026",
+        vence = "ilimitado",
         servidores = {
             ["CELESTIAL-HWID-37646993"] = "Ilusion",
             ["CELESTIAL-HWID-00000000"] = "Minimalist"
