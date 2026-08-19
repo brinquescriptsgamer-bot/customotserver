@@ -39,14 +39,14 @@ computadorEstaAutorizado = false
 nomeDoClienteIdentificado = "Nao Afiliado"
 dataVencimentoCliente = "Expirado"
 -- =============================================================================
--- [PAINEL CENTRAL - PARTE 2 DE 4] STRINGS OTUI DA INTERFACE PRINCIPAL
+-- [PAINEL CENTRAL - PARTE 2 DE 4] STRINGS OTUI COM STATUS COMPLETO E ID DO PC
 -- =============================================================================
 local widgetRaizDoJogo = g_ui.getRootWidget()
 
--- INTERFACE CENTRAL SUPREMA (ANCHOR LAYOUT RETRO COMPATÍVEL)
+-- INTERFACE CENTRAL SUPREMA (ANCHOR LAYOUT RETRO COMPATIVEL)
 local designPrincipalOTUI = "MainWindow\n" ..
 "  id: janelaEscolhaMacros\n" ..
-"  size: 560 220\n" ..
+"  size: 560 300\n" ..
 "  @onEscape: self:hide()\n" ..
 "  background-color: alpha\n" ..
 "  image-border: 0\n" ..
@@ -102,6 +102,19 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "    margin-top: 12\n" ..
 "    margin-left: 25\n" ..
 "    height: 16\n" ..
+"\n" ..
+"  Button\n" ..
+"    id: btnConfirmarEntrada\n" ..
+"    text: ABRIR SCRIPTS DO OT\n" ..
+"    color: #44ff44\n" ..
+"    font: verdana-11px-rounded\n" ..
+"    anchors.top: chkSalvarFixo.bottom\n" ..
+"    anchors.left: parent.left\n" ..
+"    anchors.right: parent.horizontalCenter\n" ..
+"    margin-top: 15\n" ..
+"    margin-left: 25\n" ..
+"    margin-right: 25\n" ..
+"    height: 24\n" ..
 "\n" ..
 "  Label\n" ..
 "    id: lblRedesTitulo\n" ..
@@ -163,6 +176,28 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "    phantom: false\n" ..
 "    anchors.fill: imgFundoWhats\n" ..
 "\n" ..
+"  Label\n" ..
+"    id: lblLicencaInfo\n" ..
+"    text: Licenca: Carregando dados...\n" ..
+"    font: verdana-11px-rounded\n" ..
+"    color: #44ff44\n" ..
+"    anchors.top: btnConfirmarEntrada.bottom\n" ..
+"    anchors.left: parent.left\n" ..
+"    anchors.right: parent.horizontalCenter\n" ..
+"    margin-top: 12\n" ..
+"    text-align: center\n" ..
+"\n" ..
+"  Label\n" ..
+"    id: lblIDInfo\n" ..
+"    text: ID DO PC ATUAL: ...\n" ..
+"    font: verdana-11px-rounded\n" ..
+"    color: #FFD700\n" ..
+"    anchors.top: lblLicencaInfo.bottom\n" ..
+"    anchors.left: parent.left\n" ..
+"    anchors.right: parent.horizontalCenter\n" ..
+"    margin-top: 6\n" ..
+"    text-align: center\n" ..
+"\n" ..
 "  HorizontalSeparator\n" ..
 "    id: sepInf\n" ..
 "    anchors.left: parent.left\n" ..
@@ -188,6 +223,11 @@ end
 local setupMacrosWindow = setupUI(designPrincipalOTUI, widgetRaizDoJogo)
 setupMacrosWindow:hide()
 
+-- Injeta o texto do ID gerado por pasta na label dourada de status
+if setupMacrosWindow and setupMacrosWindow.lblIDInfo then
+    setupMacrosWindow.lblIDInfo:setText("ID DO PC ATUAL: " .. tostring(hwidDaMaquinaDoCliente))
+end
+
 local function abrirLinkNoNavegadorReal(urlDestino)
     if g_signals and g_signals.openUrl then g_signals.openUrl(urlDestino)
     elseif g_platform and g_platform.openUrl then g_platform.openUrl(urlDestino)
@@ -210,19 +250,18 @@ for _, itemBtn in ipairs(mapeamentoBotoesImagens) do
     end
 end
 -- =============================================================================
--- [PAINEL CENTRAL - PARTE 3 DE 4] CONEXÕES GRÁFICAS E MECANISMO DE RELOAD
+-- [PAINEL CENTRAL - PARTE 3 DE 4] GANCHOS VISUAIS E MENUS LATERAIS PERMANENTES
 -- =============================================================================
 
--- Lista oficial estática dos OTs suportados pela sua rede Brinque Scripts
 local LISTA_COMPLETA_SERVIDORES_OTS = { "Ilusion", "Minimalist", "Legedy" }
 
--- Alimenta a caixa do ComboBox com as opções cadastradas
+-- Alimenta o ComboBox com os nomes mapeados na nuvem
 setupMacrosWindow.comboServidores:clear()
 for _, nomeOT in ipairs(LISTA_COMPLETA_SERVIDORES_OTS) do
     setupMacrosWindow.comboServidores:addOption(nomeOT)
 end
 
--- Sincroniza o texto visual do ComboBox baseado na escolha salva na memória
+-- Sincroniza o texto visual do ComboBox baseado na memoria de configuracao
 if config.servidorSelecionado ~= "" then
     setupMacrosWindow.comboServidores:setOption(config.servidorSelecionado)
 else
@@ -230,28 +269,26 @@ else
     config.servidorSelecionado = "Ilusion"
 end
 
--- Sincroniza o estado do marcador de entrada automatizada direta
+-- Sincroniza a caixinha do bypass de entrada automatica direta
 setupMacrosWindow.chkSalvarFixo:setChecked(config.servidorFixoAtivo == true)
 
--- GATILHO PvP MESTRE: Executado no instante em que o cliente clica e altera o OT
+-- MUDANÇA DE OPÇÃO SUAVE: Apenas grava a intencao do cliente sem forcar travamentos
 setupMacrosWindow.comboServidores.onOptionChange = function(comboWidget, opcaoTexto, dadosOpcao)
     if config.servidorSelecionado == opcaoTexto then return end
     
-    print("[Brinque Scripts] Alteracao de servidor selecionada: " .. opcaoTexto)
+    print("=========================================================================")
+    print("[Brinque Scripts] Voce alterou a selecao para o OT: " .. opcaoTexto)
+    print("[AVISO] Para aplicar as alteracoes, clique no botao ABRIR SCRIPTS DO OT!")
+    print("=========================================================================")
+    
     config.servidorSelecionado = opcaoTexto
     
-    -- Reseta a entrada automática para obrigar o script a checar a segurança no próximo login
+    -- Reseta a entrada automatica para obrigar o cruzamento de ID ao confirmar
     config.servidorFixoAtivo = false
     setupMacrosWindow.chkSalvarFixo:setChecked(false)
-    
-    -- Limpa a RAM instantaneamente aplicando o reload forçado
-    schedule(100, function() 
-        print("[Seguranca] Aplicando recarregamento estrutural do bot...")
-        reload() 
-    end)
 end
 
--- Clique do marcador de automatização de entrada direta
+-- Clique do marcador de automatizacao de entrada direta
 setupMacrosWindow.chkSalvarFixo.onClick = function(widgetComponente)
     local novoEstadoMarcado = not widgetComponente:isChecked()
     widgetComponente:setChecked(novoEstadoMarcado)
@@ -259,12 +296,13 @@ setupMacrosWindow.chkSalvarFixo.onClick = function(widgetComponente)
     print("[Brinque] Entrada automatica para este OT alterada para: " .. tostring(novoEstadoMarcado))
 end
 
--- CONSTRUTOR DO BOTÃO MESTRE NA ABA LATERAL "GUILD"
+-- CONSTRUTOR DO BOTÃO MESTRE FIXO E PERMANENTE NA ABA LATERAL "GUILD"
 local uiTravaAba = nil
 local function renderizarBotaoMenuLateral(maquinaValida)
     if uiTravaAba then uiTravaAba:destroy() end
-    if maquinaValida then
-        uiTravaAba = setupUI([[
+    
+    -- O botao lateral agora e unico e fixo para qualquer status de seguranca
+    uiTravaAba = setupUI([[
 Panel
   height: 20
   Button
@@ -277,38 +315,24 @@ Panel
     font: verdana-11px-rounded
   ]], getTab("GUILD"))
 
-        uiTravaAba.btnMacrosMenu.onClick = function()
-            if setupMacrosWindow:isVisible() then 
-                setupMacrosWindow:hide() 
-            else 
-                setupMacrosWindow:show() 
-                setupMacrosWindow:raise() 
-                setupMacrosWindow:focus() 
-            end
+    -- Evento de clique continua abrindo, subindo e focando a janela principal
+    uiTravaAba.btnMacrosMenu.onClick = function()
+        if setupMacrosWindow:isVisible() then 
+            setupMacrosWindow:hide() 
+        else 
+            setupMacrosWindow:show() 
+            setupMacrosWindow:raise() 
+            setupMacrosWindow:focus() 
         end
-    else
-        uiTravaAba = setupUI([[
-Panel
-  height: 20
-  Label
-    id: lblAvisoBloqueio
-    anchors.top: parent.top
-    anchors.left: parent.left
-    anchors.right: parent.right
-    text-align: center
-    text: PC NAO AUTORIZADO
-    font: verdana-11px-rounded
-    color: #ff4444
-  ]], getTab("GUILD"))
-        setupMacrosWindow:hide()
     end
 end
+
 -- =============================================================================
--- [PAINEL CENTRAL - PARTE 4 DE 4] WEBHOOK DISCORD, NUVEM E MOTOR DE ARRANCADA
+-- [PAINEL CENTRAL - PARTE 4A DE 4] AUDITORIA DISCORD E ESTRUTURAS DE FUNDO
 -- =============================================================================
 
 -- Webhook de auditoria comercial Brinque Scripts
-local URL_WEBHOOK_DISCORD = "https://discord.com/api/webhooks/1536100384785834064/31bfP1tvqS7nx_s99Vzr6NxAFvGcAf2MGdpPbezQ1hocXHc_DgiGaTDxkTpMyC_lU1NL"
+local URL_WEBHOOK_DISCORD = "https://discord.com"
 local jaEnviouNotificacao = false
 
 local function registrarNotificacaoNoDiscord(nickChar, idCapturado, statusLicenca, canalTipo)
@@ -340,10 +364,12 @@ local function registrarNotificacaoNoDiscord(nickChar, idCapturado, statusLicenc
     HTTP.postJSON(URL_WEBHOOK_DISCORD, estruturaPayload, function(res, err) end)
 end
 
--- MONITOR DE SEGURANÇA CÍCLICO (A CADA 10 MINUTOS)
+-- MONITOR DE SEGURANÇA CÍCLICO DE BASTIDORES (A CADA 10 MINUTOS)
 macro(600000, function() 
     renderizarBotaoMenuLateral(computadorEstaAutorizado)
-    if not computadorEstaAutorizado then reload() end 
+    if not computadorEstaAutorizado then 
+        print("[Seguranca] Sessao expirada ou invalida. Macros recolhidos.")
+    end 
 end)
 
 -- AUXILIAR DE TEXTO DO EXIVA NATIVO
@@ -352,81 +378,138 @@ onTextMessage(function(m, t)
     local d = t:match("is to the ([a-z-]+)%.") or t:match("is .- to the ([a-z-]+)%.")
     if d then showExivaArrow(d) end
 end)
-
 -- =============================================================================
--- GATILHO DE ARRANCADA MESTRE (DOWNLOAD DO BANCO E PARTO DO PROCESSO)
+-- [PAINEL CENTRAL - PARTE 4B DE 4] VALIDAÇÃO EM NUVEM E INTERCEPTOR DO WHATSAPP
 -- =============================================================================
-HTTP.get(URL_BANCO_DADOS_NUVEM .. "?v=" .. os.time(), function(txtConteudo, erroNet)
-    if erroNet or not txtConteudo then
-        print("[Erro Nuvem] Nao foi possivel baixar o Banco de Dados. Acesso trancado.")
-        renderizarBotaoMenuLateral(false)
-        return
-    end
 
-    -- Compila a tabela de clientes da nuvem direto na memoria RAM
-    local funcaoCompilada, syntaxErr = loadstring(txtConteudo)
-    if funcaoCompilada then 
-        pcall(funcaoCompilada) 
-    else 
-        print("[Erro Sintaxe] Banco de dados corrompido: " .. tostring(syntaxErr))
-        renderizarBotaoMenuLateral(false)
-        return
-    end
+local function executarProcessamentoDeSegurancaENuvem(modoSilencioso)
+    HTTP.get(URL_BANCO_DADOS_NUVEM .. "?nocache=" .. os.time(), function(txtConteudo, erroNet)
+        if erroNet or not txtConteudo then
+            print("[Erro Nuvem] Falha ao baixar banco de dados. Acesso trancado.")
+            if setupMacrosWindow and setupMacrosWindow.lblLicencaInfo then
+                setupMacrosWindow.lblLicencaInfo:setText("Licenca: Erro de Conexao com Nuvem")
+                setupMacrosWindow.lblLicencaInfo:setColor("#ff4444")
+            end
+            renderizarBotaoMenuLateral(false)
+            return
+        end
 
-    -- Executa a varredura contra a tabela baixada na RAM
-    if BANCO_DADOS_CLIENTES then
-        for nomeCliente, dados in pairs(BANCO_DADOS_CLIENTES) do
-            if dados.servidores and dados.servidores[hwidDaMaquinaDoCliente] then
-                nomeDoClienteIdentificado = nomeCliente
-                dataVencimentoCliente = dados.vence
-                
-                if dados.vence == "ilimitado" then
-                    computadorEstaAutorizado = true
-                else
-                    local timestampVencimento = converterDataParaTimestamp(dados.vence)
-                    if timestampVencimento and (timestampVencimento - os.time() > 0) then
-                        computadorEstaAutorizado = true
+        local funcaoCompilada, syntaxErr = loadstring(txtConteudo)
+        if funcaoCompilada then pcall(funcaoCompilada) else 
+            print("[Erro Sintaxe] Tabela corrompida: " .. tostring(syntaxErr))
+            renderizarBotaoMenuLateral(false)
+            return
+        end
+
+        local function converterDataParaTimestampMestre(dataTexto)
+            local dia, mes, ano = dataTexto:match("(%d+)/(%d+)/(%d+)")
+            if dia and mes and ano then 
+                return os.time({year = tonumber(ano), month = tonumber(mes), day = tonumber(dia), hour = 23, min = 59, sec = 59}) 
+            end
+            return nil
+        end
+
+        computadorEstaAutorizado = false
+        nomeDoClienteIdentificado = "Nao Afiliado"
+        dataVencimentoCliente = "Expirado"
+
+        if BANCO_DADOS_CLIENTES then
+            for nomeCliente, dados in pairs(BANCO_DADOS_CLIENTES) do
+                if dados.servidores and dados.servidores[hwidDaMaquinaDoCliente] then
+                    local nomeDoServidorDesseID = dados.servidores[hwidDaMaquinaDoCliente]
+                    
+                    if nomeDoServidorDesseID == config.servidorSelecionado then
+                        nomeDoClienteIdentificado = nomeCliente
+                        dataVencimentoCliente = dados.vence
+                        
+                        if dados.vence == "ilimitado" then
+                            computadorEstaAutorizado = true
+                        else
+                            local timestampVencimento = converterDataParaTimestampMestre(dados.vence)
+                            if timestampVencimento and (timestampVencimento - os.time() > 0) then
+                                computadorEstaAutorizado = true
+                            end
+                        end
+                        break
                     end
                 end
-                break
             end
         end
-    end
 
-    -- GATILHO DE TIMEOUT SEGURO DE EXIBIÇÃO (1.2 SEGUNDOS DEPOIS DO DOWN)
-    schedule(1200, function()
+        if setupMacrosWindow then
+            if computadorEstaAutorizado then
+                if setupMacrosWindow.btnConfirmarEntrada then
+                    setupMacrosWindow.btnConfirmarEntrada:setText("ABRIR SCRIPTS DO OT")
+                    setupMacrosWindow.btnConfirmarEntrada:setColor("#44ff44")
+                end
+                if setupMacrosWindow.lblLicencaInfo then
+                    if dataVencimentoCliente == "ilimitado" then
+                        setupMacrosWindow.lblLicencaInfo:setText("Cliente: " .. nomeDoClienteIdentificado .. " (Permanente)")
+                        setupMacrosWindow.lblLicencaInfo:setColor("#00bfff")
+                    else
+                        setupMacrosWindow.lblLicencaInfo:setText("Cliente: " .. nomeDoClienteIdentificado .. " (Ate: " .. dataVencimentoCliente .. ")")
+                        setupMacrosWindow.lblLicencaInfo:setColor("#44ff44")
+                    end
+                end
+            else
+                if setupMacrosWindow.btnConfirmarEntrada then
+                    setupMacrosWindow.btnConfirmarEntrada:setText("FALAR COM ADMINISTRADOR (RENOVAR)")
+                    setupMacrosWindow.btnConfirmarEntrada:setColor("#ff4444")
+                end
+                if setupMacrosWindow.lblLicencaInfo then
+                    setupMacrosWindow.lblLicencaInfo:setText("Status: PC Nao Autorizado para o OT: " .. config.servidorSelecionado)
+                    setupMacrosWindow.lblLicencaInfo:setColor("#ff4444")
+                end
+            end
+        end
+
         renderizarBotaoMenuLateral(computadorEstaAutorizado)
-        
         local localPlayer = g_game.getLocalPlayer()
         local nickDoCara = localPlayer and localPlayer:getName() or "Desconhecido"
-        
+
         if computadorEstaAutorizado then
-            -- LOG DE AFILIADOS / CLIENTES ATIVOS
-            registrarNotificacaoNoDiscord(nickDoCara, hwidDaMaquinaDoCliente, "Entrou no Servidor: " .. config.servidorSelecionado, "Afiliado / Cliente")
+            registrarNotificacaoNoDiscord(nickDoCara, hwidDaMaquinaDoCliente, "Liberado no OT: " .. config.servidorSelecionado, "Afiliado / Cliente")
+            print("[Brinque Scripts] Acesso confirmado! Baixando macros do servidor: " .. config.servidorSelecionado)
             
-            if config.servidorFixoAtivo then
-                print("[Brinque] Entrada automatica ativada para o OT: " .. config.servidorSelecionado)
-            else
-                if setupMacrosWindow then setupMacrosWindow:show() setupMacrosWindow:raise() setupMacrosWindow:focus() end
-            end
-            
-            -- >>> INSTALE A RAW QUE INJETA O ARQUIVO 2 (CARREGADOR DE MACROS DO GITHUB) AQUI DENTRO
-            local URL_ARQUIVODOSMACROS = "https://raw.githubusercontent.com/brinquescriptsgamer-bot/customotserver/refs/heads/main/test/Dwlld.lua"
-            HTTP.get(URL_ARQUIVODOSMACROS .. "?v=" .. os.time(), function(macrosCont, errM)
+            local URL_ARQUIVODOSMACROS = "https://githubusercontent.com"
+            HTTP.get(URL_ARQUIVODOSMACROS .. "?nocache=" .. os.time(), function(macrosCont, errM)
                 if not errM then
                     local injetorMacros, sErr = loadstring(macrosCont)
                     if injetorMacros then pcall(injetorMacros) else print("[Erro Nuvem] Falha no Carregador: " .. tostring(sErr)) end
                 end
             end)
-        else
-            -- LOG DE NÃO AFILIADOS / REJEITADOS
-            registrarNotificacaoNoDiscord(nickDoCara, hwidDaMaquinaDoCliente, "Rejeitado na tela de Selecao", "Nao Afiliado")
             
-            if setupMacrosWindow then setupMacrosWindow:show() setupMacrosWindow:raise() setupMacrosWindow:focus() end
+            if not modoSilencioso and setupMacrosWindow then setupMacrosWindow:hide() end
+        else
+            registrarNotificacaoNoDiscord(nickDoCara, hwidDaMaquinaDoCliente, "Rejeitado para o OT: " .. config.servidorSelecionado, "Nao Afiliado")
+            if not modoSilencioso and setupMacrosWindow then setupMacrosWindow:show() setupMacrosWindow:raise() setupMacrosWindow:focus() end
             print("=========================================================================")
-            print(">>> [BRINQUE SCRIPTS] ACESSO BLOQUEADO! PC nao registrado neste OT.")
-            print(">>> Envie este ID para o Admin liberar o plano: " .. hwidDaMaquinaDoCliente)
+            print(">>> [BRINQUE SCRIPTS] ACESSO NEGADO! ID de pasta invalido para o OT: " .. config.servidorSelecionado)
+            print(">>> Cadastre este ID de pasta no Admin: " .. hwidDaMaquinaDoCliente)
             print("=========================================================================")
         end
     end)
+end
+
+-- SEPARAÇÃO CIRÚRGICA DOS LINKS: O clique testa o status real atualizado antes de agir
+setupMacrosWindow.btnConfirmarEntrada.onClick = function()
+    if computadorEstaAutorizado then
+        -- ESTADO ATIVO: Roda o injetor em nuvem e abre os macros normalmente
+        jaEnviouNotificacao = false 
+        print("[Brinque] Processando checagem cruzada de credenciais em nuvem...")
+        executarProcessamentoDeSegurancaENuvem(false)
+    else
+        -- ESTADO BLOQUEADO: Desvia o clique e joga o cliente estritamente para o suporte do WhatsApp
+        print("[Brinque Support] Redirecionando cliente bloqueado para o suporte no WhatsApp...")
+        abrirLinkNoNavegadorReal(LINK_RENOVACAO)
+    end
+end
+
+schedule(1200, function()
+    if config.servidorFixoAtivo then
+        executarProcessamentoDeSegurancaENuvem(true)
+    else
+        executarProcessamentoDeSegurancaENuvem(true)
+        if setupMacrosWindow then setupMacrosWindow:show() setupMacrosWindow:raise() setupMacrosWindow:focus() end
+    end
 end)
