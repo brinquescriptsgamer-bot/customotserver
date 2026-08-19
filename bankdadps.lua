@@ -12,7 +12,7 @@ BANCO_DADOS_CLIENTES = {
         }
     },
     ["Marcos"] = {
-        vence = "12/09/2026",
+        vence = "12/08/2026",
         servidores = {
             ["CELESTIAL-HWID-37646993"] = "Ilusion",
             ["CELESTIAL-HWID-37646993"] = "Minimalist"
