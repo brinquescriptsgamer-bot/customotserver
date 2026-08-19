@@ -30,7 +30,7 @@ local SCRIPTS_DO_REPOSITORIO = {
 	-- ==========================================
 	-- MACROS SEM PRIORIDADE (CAVE/TARGET)
     -- ==========================================
-     { nome = "MAGIAS S/PK BRQ ILUSION", key = "magiasempkBRQ", cat = "cave_target",         url = URL_BASE_REPOSITORIO .. "sv_ilusion/cave_target/magiasempkBRQ.lua" }
+     { nome = "MAGIAS S/PK BRQ ILUSION", key = "magiasempkBRQ", cat = "cave_target",         url = URL_BASE_REPOSITORIO .. "sv_ilusion/cave_target/magiasempkBRQ.lua" },
 
 
     -- ==========================================
