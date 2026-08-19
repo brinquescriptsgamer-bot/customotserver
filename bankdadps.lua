@@ -7,7 +7,7 @@ BANCO_DADOS_CLIENTES = {
     ["Dono Brinque"] = {
         vence = "ilimitado",
         servidores = {
-            ["CELESTIAL-HWID-00000000"] = "Ilusion",
+            ["CELESTIAL-HWID-37646993"] = "Ilusion",
             ["CELESTIAL-HWID-49966485"] = "Minimalist"
         }
     },
