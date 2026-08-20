@@ -59,7 +59,7 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "\n" ..
 "  UIWidget\n" ..
 "    id: imgFundoCustomCelestiais\n" ..
-"    image-source: /bot/CUSTOM_PREMIUM/imagens/llogobrinque.png\n" ..
+"    image-source: /bot/Vs3_CUSTOM_PREMIUM/vBot_configs/confg/Imagens/llogobrinque.png\n" ..
 "    image-smooth: true\n" ..
 "    image-fixed-ratio: false\n" ..
 "    anchors.fill: parent\n" ..
@@ -133,7 +133,7 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "\n" ..
 "  UIWidget\n" ..
 "    id: imgFundoInsta\n" ..
-"    image-source: /bot/BRINQUE/imagens/BOTAO.png\n" ..
+"    image-source: /bot/Vs3_CUSTOM_PREMIUM/vBot_configs/confg/Imagens/BOTAO.png\n" ..
 "    image-smooth: true\n" ..
 "    image-fixed-ratio: false\n" ..
 "    anchors.top: lblRedesTitulo.bottom\n" ..
@@ -157,7 +157,7 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "\n" ..
 "  UIWidget\n" ..
 "    id: imgFundoWhats\n" ..
-"    image-source: /bot/BRINQUE/imagens/BOTAO.png\n" ..
+"    image-source: /bot/Vs3_CUSTOM_PREMIUM/vBot_configs/confg/Imagens/BOTAO.png\n" ..
 "    image-smooth: true\n" ..
 "    image-fixed-ratio: false\n" ..
 "    anchors.top: imgFundoInsta.bottom\n" ..
@@ -233,7 +233,7 @@ local designMacrosOTUI = "MainWindow\n" ..
 "\n" ..
 "  UIWidget\n" ..
 "    id: imgFundoMacros\n" ..
-"    image-source: /bot/CUSTOM_PREMIUM/imagens/logobrinque.png\n" ..
+"    image-source: /bot/Vs3_CUSTOM_PREMIUM/vBot_configs/confg/Imagens/logobrinque.png\n" ..
 "    image-smooth: true\n" ..
 "    image-fixed-ratio: false\n" ..
 "    anchors.fill: parent\n" ..
