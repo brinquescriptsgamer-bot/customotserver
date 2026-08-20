@@ -117,7 +117,7 @@ local function executarFilaCustomizadaHTTP(indice)
         -- =====================================================================
         -- 🎵 GATILHO DE ÁUDIO CORRIGIDO (TOCA USANDO A FUNÇÃO NATIVA DO SEU BOT)
         -- =====================================================================
-        local somCustomizadoBrinque = "bot/Vs3_CUSTOM_PREMIUM/Imagens/som.ogg"
+        local somCustomizadoBrinque = "/bot/Vs3_CUSTOM_PREMIUM/Imagens/som.ogg"
         
         if g_resources.fileExists(somCustomizadoBrinque) then
             playSound(somCustomizadoBrinque) -- Toca o seu som se ele existir na pasta sounds
