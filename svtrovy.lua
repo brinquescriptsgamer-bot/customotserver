@@ -166,7 +166,7 @@ local designPrincipalOTUI = "MainWindow\n" ..
 "    margin-top: 10\n" ..
 "    margin-left: 20\n" ..
 "    margin-right: 15\n" ..
-"    height: 24\n" ..
+"    height: 80\n" ..
 "    phantom: true\n" ..
 "  Label\n" ..
 "    id: btnWhatsApp\n" ..
