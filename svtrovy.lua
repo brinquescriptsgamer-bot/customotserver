@@ -23,7 +23,7 @@ local LINK_INSTAGRAM = "https://www.instagram.com/brinquescriptsgamer?igsh=dXhhN
 local LINK_WHATSAPP  = "https://chat.whatsapp.com/D4WHVuAy41t6uQ6QZ3ibtR"
 local LINK_DISCORD   = "https://discord.gg/BRNzJ7cZjq"
 local LINK_YOUTUBE   = "https://youtube.com"
-local pastaImg        = "/bot/BRINQUE/imagens/"
+local pastaImg        = "/bot/Vs3_CUSTOM_PREMIUM/vBot_configs/confg/Imagens/"
 
 -- 🌐 URL DO SEU BANCO DE DADOS DE CLIENTES EM NUVEM (RAW GITHUB)
 local URL_BANCO_DADOS_NUVEM = "https://raw.githubusercontent.com/brinquescriptsgamer-bot/customotserver/refs/heads/main/bankdadps.lua"
