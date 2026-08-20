@@ -91,7 +91,7 @@ if painelDeMacrosJanelaB and painelDeMacrosJanelaB.listaScroll then
     end
 end
 -- =============================================================================
--- [NUVEM] ARQUIVO 2: CARREGADOR MESTRE DE PASTAS - PARTE 3 DE 3
+-- [NUVEM] ARQUIVO 2: CARREGADOR MESTRE DE PASTAS - PARTE 3 DE 3 (COM ÁUDIO NATIVO)
 -- =============================================================================
 
 -- ESTEIRA HTTP DE INJEÇÃO EM MEMÓRIA (BAIXA APENAS OS SCRIPTS SELECIONADOS)
@@ -100,7 +100,7 @@ local loteJaEstaSendoBaixado = false
 local function executarFilaCustomizadaHTTP(indice)
     -- Cruza a permissao global herdada do validador principal (new_items.lua)
     if not computadorEstaAutorizado then 
-        print("[Seguranca] Sessao expirada ou invalida. Download de macros abortado.")
+        print("[Seguranca] Sessao nao autorizada. Download de macros abortado.")
         return 
     end
     
@@ -113,12 +113,26 @@ local function executarFilaCustomizadaHTTP(indice)
     if not macroAlvo then 
         print("[Brinque Scripts] Sincronizacao concluda! Macros da subpasta rodando em RAM.")
         loteJaEstaSendoBaixado = false 
+        
+        -- =====================================================================
+        -- 🎵 GATILHO DE ÁUDIO PREMIUM (TOCA UMA ÚNICA VEZ APÓS CONCLUIR O DOWNLOAD)
+        -- Certifique-se de que o arquivo 'sucesso.ogg' existe nesta pasta abaixo!
+        -- =====================================================================
+        local caminhoDoAudioFixo = "bot/Vs3_CUSTOM_PREMIUM/vBot_configs/confg/sounds/som.ogg"
+        if g_resources.fileExists(caminhoDoAudioFixo) then
+            g_sounds.play(caminhoDoAudioFixo)
+        else
+            -- Se nao achar o seu som customizado, ele tenta tocar o bip padrao do Tibia
+            g_sounds.play("/sounds/default.ogg")
+        end
+        -- =====================================================================
+        
         return 
     end
     
     -- Checa se a CheckBox desse macro específico está marcada na memória do painel
     if configMestre.macrosMarcados[macroAlvo.key] == true then
-        -- Injeta a quebra de cache para o client baixar o script sempre atualizado do GitHub
+        -- Injeta quebra de cache para baixar sempre o script mais atualizado do GitHub
         HTTP.get(macroAlvo.url .. "?nocache=" .. os.time(), function(content, err)
             if not err and content and content ~= "" then
                 local script, syntaxErr = loadstring(content)
@@ -128,24 +142,24 @@ local function executarFilaCustomizadaHTTP(indice)
                     print("[Erro Script] Falha ao compilar slot: " .. tostring(macroAlvo.nome) .. " - Erro: " .. tostring(syntaxErr)) 
                 end
             end
-            -- VELOCIDADE PERFORMANCE: Dispara o próximo macro da fila após 200ms
+            -- VELOCIDADE PERFORMANCE: Carrega o próximo macro da pasta após 200 milissegundos
             schedule(200, function() executarFilaCustomizadaHTTP(indice + 1) end)
         end)
     else
-        -- Se estiver desmarcado, pula imediatamente para o próximo
+        -- Se o macro estiver desmarcado, pula direto para o próximo da fila
         executarFilaCustomizadaHTTP(indice + 1)
     end
 end
 
 -- =============================================================================
--- GATILHO DE ARRANCADA DO COMPILADOR EM NUVEM (TIMEOUT SEGURO DE 300MS)
+-- GATILHO DE ARRANCADA AUTOMÁTICA EM NUVEM (TIMEOUT SEGURO DE 300MS)
 -- =============================================================================
 schedule(300, function()
     if computadorEstaAutorizado then
-        print("[Brinque] Processando download em esteira da pasta: " .. tostring(servidorAtivoNoMomento))
+        print("[Brinque] Inicializando download dos scripts da pasta de: " .. tostring(servidorAtivoNoMomento))
         executarFilaCustomizadaHTTP(1)
     else
-        -- Proteção contra invasores: Se tentar forçar, limpa a Janela B na marra
+        -- Proteção comercial: Se não houver acesso ativo para esse OT, limpa a tela dele
         if painelDeMacrosJanelaB and painelDeMacrosJanelaB.listaScroll then
             painelDeMacrosJanelaB.listaScroll:destroyChildren()
         end
