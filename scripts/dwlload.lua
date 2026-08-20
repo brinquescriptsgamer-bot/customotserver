@@ -91,7 +91,7 @@ if painelDeMacrosJanelaB and painelDeMacrosJanelaB.listaScroll then
     end
 end
 -- =============================================================================
--- [NUVEM] ARQUIVO 2: CARREGADOR MESTRE DE PASTAS - PARTE 3 DE 3 (COM ÁUDIO NATIVO)
+-- [NUVEM] ARQUIVO 2: CARREGADOR MESTRE DE PASTAS - PARTE 3 DE 3 (ÁUDIO CORRIGIDO)
 -- =============================================================================
 
 -- ESTEIRA HTTP DE INJEÇÃO EM MEMÓRIA (BAIXA APENAS OS SCRIPTS SELECIONADOS)
@@ -115,15 +115,14 @@ local function executarFilaCustomizadaHTTP(indice)
         loteJaEstaSendoBaixado = false 
         
         -- =====================================================================
-        -- 🎵 GATILHO DE ÁUDIO PREMIUM (TOCA UMA ÚNICA VEZ APÓS CONCLUIR O DOWNLOAD)
-        -- Certifique-se de que o arquivo 'sucesso.ogg' existe nesta pasta abaixo!
+        -- 🎵 GATILHO DE ÁUDIO CORRIGIDO (TOCA USANDO A FUNÇÃO NATIVA DO SEU BOT)
         -- =====================================================================
-        local caminhoDoAudioFixo = "bot/Vs3_CUSTOM_PREMIUM/vBot_configs/confg/sounds/som.ogg"
-        if g_resources.fileExists(caminhoDoAudioFixo) then
-            g_sounds.play(caminhoDoAudioFixo)
+        local somCustomizadoBrinque = "bot/Vs3_CUSTOM_PREMIUM/vBot_configs/confg/sounds/som.ogg"
+        
+        if g_resources.fileExists(somCustomizadoBrinque) then
+            playSound(somCustomizadoBrinque) -- Toca o seu som se ele existir na pasta sounds
         else
-            -- Se nao achar o seu som customizado, ele tenta tocar o bip padrao do Tibia
-            g_sounds.play("/sounds/default.ogg")
+            playSound("/sounds/magnum.ogg") -- Se não achar, toca o magnum nativo do bot
         end
         -- =====================================================================
         
